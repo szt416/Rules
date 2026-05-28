@@ -11,4 +11,5 @@ DOMAIN,ask.ash.yt
 DOMAIN,ask.asubaka.top
 #Misaya
 DOMAIN-KEYWORD,misaya
-
+#Ash机场服
+DOMAIN-SUFFIX,ash.yt
