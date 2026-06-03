@@ -19,7 +19,10 @@ DOMAIN-SUFFIX,emby.my
 #酥糖
 DOMAIN,stjps.sttss.de
 DOMAIN-SUFFIX,sakim.org
-#doubon
+#Doubon
 DOMAIN-SUFFIX,114514.quest
 #SDL
 DOMAIN,lite.saturdayent.top
+#PandaTV
+DOMAIN-KEYWORD,pandtv
+DOMAIN-KEYWORD,pdtvs
