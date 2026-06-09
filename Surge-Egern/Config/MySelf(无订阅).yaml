@@ -1,0 +1,595 @@
+ipv6: true
+allow_external_connections: false
+hijack_dns:
+- 8.8.8.8:53
+- 8.8.4.4:53
+geoip_db_url: https://github.com/Hackl0us/GeoIP2-CN/raw/release/Country.mmdb
+proxy_latency_test_url: http://www.gstatic.com/generate_204
+direct_latency_test_url: http://www.baidu.com
+dns:
+  upstreams:
+    default:
+    - 223.5.5.5
+    - 119.29.29.29
+    secure:
+    - https://223.5.5.5/dns-query
+  forward:
+  - domain_wildcard:
+      match: dl.google.com
+      value: 119.29.29.29
+  - domain_wildcard:
+      match: dl.l.google.com
+      value: 119.29.29.29
+  - domain_wildcard:
+      match: update.googleapis.com
+      value: 119.29.29.29
+  - domain_wildcard:
+      match: amplifi.lan
+      value: system
+  - domain_wildcard:
+      match: router.synology.com
+      value: system
+  - domain_wildcard:
+      match: sila.razer.com
+      value: system
+  - domain_wildcard:
+      match: router.asus.com
+      value: system
+  - domain_wildcard:
+      match: routerlogin.net
+      value: system
+  - domain_wildcard:
+      match: orbilogin.com
+      value: system
+  - domain_wildcard:
+      match: www.LinksysSmartWiFi.com
+      value: system
+  - domain_wildcard:
+      match: LinksysSmartWiFi.com
+      value: system
+  - domain_wildcard:
+      match: myrouter.local
+      value: system
+  - domain_wildcard:
+      match: www.miwifi.com
+      value: system
+  - domain_wildcard:
+      match: miwifi.com
+      value: system
+  - domain_wildcard:
+      match: mediarouter.home
+      value: system
+  - domain_wildcard:
+      match: tplogin.cn
+      value: system
+  - domain_wildcard:
+      match: tplinklogin.net
+      value: system
+  - domain_wildcard:
+      match: melogin.cn
+      value: system
+  - domain_wildcard:
+      match: falogin.cn
+      value: system
+  hosts:
+    mtalk.google.com:
+    - 108.177.125.188
+bypass_tunnel_proxy:
+- 192.168.0.0/24
+- 10.0.0.0/8
+- 172.16.0.0/12
+- 127.0.0.1
+- localhost
+- '*.local'
+real_ip_domains:
+- '*.srv.nintendo.net'
+- '*.stun.playstation.net'
+- xbox.*.microsoft.com
+- '*.xboxlive.com'
+- '*.battlenet.com.cn'
+- '*.battlenet.com'
+- '*.blzstatic.cn'
+- '*.battle.net'
+policy_groups:
+- external:
+    name: 订阅 3
+    type: select
+    urls:
+    - 链接 3
+    update_interval: 10800
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/kuancoolapk(1).png
+    hidden: false
+- external:
+    name: 订阅 2
+    type: select
+    urls:
+    - 链接 2
+    update_interval: 0
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/06jichang/ash.png
+    hidden: false
+- external:
+    name: 订阅 1
+    type: select
+    urls:
+    - 链接 1
+    filter: vv
+    update_interval: 0
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/06jichang/xiaoxiong(1).png
+    hidden: false
+- select:
+    name: Netflix
+    policies:
+    - 🇯🇵 Japan
+    - 🇺🇸 UnitedStates
+    - 🇭🇰 HongKong
+    - 🇸🇬 Singapore
+    - 🇨🇳 Taiwan
+    - 🇰🇷 Korea
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/netflix(old).png
+    hidden: false
+- select:
+    name: Twitter
+    policies:
+    - 🇰🇷 Korea
+    - 🇯🇵 Japan
+    - 🇨🇳 Taiwan
+    - 🇸🇬 Singapore
+    - 🇺🇸 UnitedStates
+    - 🇭🇰 HongKong
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/twitter(1).png
+    hidden: false
+- select:
+    name: Telegram
+    policies:
+    - 🇰🇷 Korea
+    - 🇨🇳 Taiwan
+    - 🇺🇸 UnitedStates
+    - 🇭🇰 HongKong
+    - 🇸🇬 Singapore
+    - 🇯🇵 Japan
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/telegram.png
+    hidden: false
+- select:
+    name: OpenAI
+    policies:
+    - 🇭🇰 HongKong
+    - 🇰🇷 Korea
+    - 🇨🇳 Taiwan
+    - 🇺🇸 UnitedStates
+    - 🇸🇬 Singapore
+    - 🇯🇵 Japan
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/chatgpt(balck).png
+    hidden: false
+- select:
+    name: Microsoft
+    policies:
+    - DIRECT
+    - 🇭🇰 HongKong
+    - 🇺🇸 UnitedStates
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/microsoft(1).png
+    hidden: false
+- select:
+    name: BiliBili Domestic
+    policies:
+    - DIRECT
+    - 🇭🇰 HongKong
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/bilibili(2).png
+    hidden: false
+- select:
+    name: BiliBili Global
+    policies:
+    - 🇰🇷 Korea
+    - 🇯🇵 Japan
+    - 🇨🇳 Taiwan
+    - 🇸🇬 Singapore
+    - 🇺🇸 UnitedStates
+    - 🇭🇰 HongKong
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/bilibili(4).png
+    hidden: false
+- select:
+    name: Global Media
+    policies:
+    - 🇭🇰 HongKong
+    - 🇯🇵 Japan
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/grok.png
+    hidden: false
+- select:
+    name: Google
+    policies:
+    - 🇸🇬 Singapore
+    - 🇨🇳 Taiwan
+    - 🇯🇵 Japan
+    - 🇰🇷 Korea
+    - 🇺🇸 UnitedStates
+    - 🇭🇰 HongKong
+    - 🐻 的🚗
+    - REJECT
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/google.png
+    hidden: false
+- select:
+    name: Instagram
+    policies:
+    - 🇸🇬 Singapore
+    - 🇰🇷 Korea
+    - 🇯🇵 Japan
+    - 🇨🇳 Taiwan
+    - 🇭🇰 HongKong
+    - 🇺🇸 UnitedStates
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/instagram.png
+    hidden: false
+- select:
+    name: Spotify
+    policies:
+    - 🇸🇬 Singapore
+    - 🇨🇳 Taiwan
+    - 🇯🇵 Japan
+    - 🇰🇷 Korea
+    - 🇭🇰 HongKong
+    - 🇺🇸 UnitedStates
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/spotify.png
+    hidden: false
+- select:
+    name: Apple
+    policies:
+    - 🇸🇬 Singapore
+    - 🇨🇳 Taiwan
+    - 🇯🇵 Japan
+    - 🇰🇷 Korea
+    - 🇭🇰 HongKong
+    - 🇺🇸 UnitedStates
+    - DIRECT
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/apple.png
+    hidden: false
+- select:
+    name: SpeedTest
+    policies:
+    - 🇺🇸 UnitedStates
+    - 🇸🇬 Singapore
+    - 🇨🇳 Taiwan
+    - 🇰🇷 Korea
+    - 🐻 的🚗
+    - DIRECT
+    - 🇭🇰 HongKong
+    - 🇯🇵 Japan
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/speedtest.png
+    hidden: false
+- select:
+    name: Talkatone
+    policies:
+    - 🇸🇬 Singapore
+    - 🇨🇳 Taiwan
+    - 🇯🇵 Japan
+    - 🇰🇷 Korea
+    - 🇭🇰 HongKong
+    - 🇺🇸 UnitedStates
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/talkatone.png
+    hidden: false
+- select:
+    name: GitHub
+    policies:
+    - 🇰🇷 Korea
+    - 🇯🇵 Japan
+    - 🇨🇳 Taiwan
+    - 🇸🇬 Singapore
+    - 🇭🇰 HongKong
+    - 🇺🇸 UnitedStates
+    - DIRECT
+    flatten: false
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/github.png
+    hidden: false
+- select:
+    name: Emby 代理
+    policies:
+    - 🇺🇸 UnitedStates
+    - 🇭🇰 HongKong
+    - 🇸🇬 Singapore
+    - 🇯🇵 Japan
+    - 🇰🇷 Korea
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/emby(1).png
+    hidden: false
+- select:
+    name: PT 代理
+    policies:
+    - 🇨🇳 Taiwan
+    - 🇯🇵 Japan
+    - 🇰🇷 Korea
+    - DIRECT
+    - 🇺🇸 UnitedStates
+    - 🇭🇰 HongKong
+    - 🇸🇬 Singapore
+    flatten: false
+    hidden: false
+- select:
+    name: 隐私保护
+    policies:
+    - REJECT
+    - DIRECT
+    flatten: false
+    hidden: false
+- select:
+    name: ADblock
+    policies:
+    - REJECT
+    - DIRECT
+    flatten: false
+    hidden: false
+- smart:
+    name: 🇺🇸 UnitedStates
+    policies:
+    - 🐻 的🚗
+    - Ash
+    - CoolTi
+    flatten: true
+    filter: (美国|us|US)
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/01Country/US.png
+    hidden: false
+- smart:
+    name: 🇭🇰 HongKong
+    policies:
+    - CoolTi
+    - Ash
+    flatten: true
+    filter: (香港)|(HK)|(hk)^(?!.*低)
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/01Country/Hongkong.png
+    hidden: false
+- smart:
+    name: 🇸🇬 Singapore
+    policies:
+    - CoolTi
+    - Ash
+    flatten: true
+    filter: (sg|新加坡|狮城|SG)
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/01Country/singapore(1).png
+    hidden: false
+- smart:
+    name: 🇨🇳 China
+    policies:
+    - 🐻 的🚗
+    - CoolTi
+    - Ash
+    flatten: true
+    filter: (CN)
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/01Country/taiwan(1).png
+    hidden: false
+- smart:
+    name: 🇨🇳 Taiwan
+    policies:
+    - 🐻 的🚗
+    - Ash
+    - CoolTi
+    flatten: true
+    filter: (台湾|TW)
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/01Country/taiwan(3).png
+    hidden: false
+- smart:
+    name: 🇯🇵 Japan
+    policies:
+    - 🐻 的🚗
+    - Ash
+    - CoolTi
+    flatten: true
+    filter: (jp|日本|JP)
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/01Country/Japan(3).png
+    hidden: false
+- smart:
+    name: 🇰🇷 Korea
+    policies:
+    - 🐻 的🚗
+    - Ash
+    - CoolTi
+    flatten: true
+    filter: (Korea|KR|韩国)
+    icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/01Country/Korea.png
+    hidden: false
+- select:
+    name: Final
+    policies:
+    - 🇰🇷 Korea
+    - 🇯🇵 Japan
+    - 🇨🇳 Taiwan
+    - 🇸🇬 Singapore
+    - 🇭🇰 HongKong
+    - 🇺🇸 UnitedStates
+    - DIRECT
+    flatten: false
+    filter: HK
+    hidden: false
+rules:
+- rule_set:
+    match: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/PT-Direct.list
+    policy: DIRECT
+- rule_set:
+    match: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/PT-Proxy.list
+    policy: PT 代理
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Binance/Binance.list
+    policy: 🇭🇰 HongKong
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/OKX/OKX.list
+    policy: 🇭🇰 HongKong
+- rule_set:
+    match: https://raw.githubusercontent.com/LM-Firefly/Rules/master/Domestic-Services/115.list
+    policy: DIRECT
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Tmdb/Tmdb.list
+    policy: 🇭🇰 HongKong
+- domain_suffix:
+    match: ovhcloud.com
+    policy: 🇭🇰 HongKong
+- domain_suffix:
+    match: vercel.app
+    policy: 🇭🇰 HongKong
+- asn:
+    match: '4134'
+    policy: DIRECT
+    no_resolve: true
+- domain_suffix:
+    match: cmbchina.com
+    policy: NO-HYBRID
+- domain_suffix:
+    match: 149.88.82.119
+    policy: REJECT
+- rule_set:
+    match: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Emby-Rules/Emby-Proxy.list
+    policy: Emby 代理
+- rule_set:
+    match: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Emby-Rules/Emby-Direct.list
+    policy: DIRECT
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Advertising/Advertising.list
+    policy: ADblock
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Netflix/Netflix.list
+    policy: Netflix
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Twitter/Twitter.list
+    policy: Twitter
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Instagram/Instagram.list
+    policy: Instagram
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Telegram/Telegram.list
+    policy: Telegram
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/ChinaMax/ChinaMax_All.list
+    policy: DIRECT
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Apple/Apple.list
+    policy: Apple
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/GitHub/GitHub.list
+    policy: GitHub
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Speedtest/Speedtest.list
+    policy: SpeedTest
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/OpenAI/OpenAI.list
+    policy: OpenAI
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/MeiTuan/MeiTuan.list
+    policy: DIRECT
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Microsoft/Microsoft.list
+    policy: Microsoft
+- ip_cidr:
+    match: 0.0.0.0/32
+    policy: REJECT
+    no_resolve: true
+- rule_set:
+    match: https://whatshub.top/rule/BiliBili.list
+    policy: BiliBili Domestic
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/BiliBiliIntl/BiliBiliIntl.list
+    policy: BiliBili Global
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Netflix/Netflix.list
+    policy: Netflix
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Spotify/Spotify.list
+    policy: Spotify
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/ChinaMedia/ChinaMedia.list
+    policy: DIRECT
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/GlobalMedia/GlobalMedia_All_No_Resolve.list
+    policy: Global Media
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Oracle/Oracle.list
+    policy: 🇺🇸 UnitedStates
+    disabled: false
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Google/Google.list
+    policy: Google
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Privacy/Privacy.list
+    policy: 隐私保护
+- rule_set:
+    match: https://raw.githubusercontent.com/thNylHx/Tools/refs/heads/main/Ruleset/Surge/Other/Talkatone.list
+    policy: Talkatone
+- rule_set:
+    match: LAN
+    policy: DIRECT
+- default:
+    policy: Final
+url_rewrites:
+- match: ^https?:\/\/(www.)?(g|google)\.cn
+  location: https://www.google.com
+  status_code: 302
+- match: ^https?:\/\/(ditu|maps).google\.cn
+  location: https://maps.google.com
+  status_code: 302
+- match: ^https?:\/\/(www.)?taobao\.com\/
+  location: https://taobao.com/
+  status_code: 302
+- match: ^https?:\/\/(www.)?jd\.com\/
+  location: https://www.jd.com/
+  status_code: 302
+- match: ^https?:\/\/(www.)?mi\.com\/
+  location: https://www.mi.com/
+  status_code: 302
+- match: ^https?:\/\/you\.163\.com\/
+  location: https://you.163.com/
+  status_code: 302
+- match: ^https?:\/\/(www.)?suning\.com\/
+  location: https://suning.com/
+  status_code: 302
+- match: ^https?:\/\/(www.)?yhd\.com\/
+  location: https://yhd.com/
+  status_code: 302
+- match: ^https?:\/\/api\.abema\.io\/v\d\/ip\/check
+  location: http://reject/
+  status_code: 307
+header_rewrites:
+- replace:
+    match: ^https?:\/\/.*\.zhihu\.com\/(question|topic)
+    name: User-Agent
+    value: osee2unifiedRelease/4432 osee2unifiedReleaseVersion/7.8.0 Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mo    bile/15E148
+    type: request
+scriptings:
+- generic:
+    name: flushDNS
+    script_url: https://raw.githubusercontent.com/zZPiglet/Task/master/asset/flushDNS.js
+    env:
+      _compat.$argument: icon=wand.and.stars.inverse&color=#3d3d5b
+    timeout: 10
+mitm:
+  ca_p12: MIIK3gIBAzCCCpwGCSqGSIb3DQEHAaCCCo0EggqJMIIKhTCCBKoGCSqGSIb3DQEHBqCCBJswggSXAgEAMIIEkAYJKoZIhvcNAQcBMF8GCSqGSIb3DQEFDTBSMDEGCSqGSIb3DQEFDDAkBBBaafV3UlFThlkJyVNR5f9iAgIIADAMBggqhkiG9w0CCQUAMB0GCWCGSAFlAwQBKgQQRNuIYAkDX8cL1K0hCR2n14CCBCCv2I6zQieK/DPQ5e0yhMDEQVmZaMO6EP0Y1682MIfCMsokUa3MCiXB0i+HtrQM5oWBZ1TmyRYPMO/ris/seUNdAYp+qA+WHuBngJb/2AbeP3LELK0RVBNFQ+lJGfri1NGqyeBxoW6/V3O96Kq4pI1vKkMhlQOy+ShPR720mbCri9hzAH4WKd5prM7KLDdRAYo/2dhtxzLDK9m+NqGbvjhWcrYnwBfcQFkWGu3sdy1ISE8HTT1NQbNIgI7bk+zFxt2lgDkg5w1Fmus7kcQZeNkQ6FMuZRjc7U2vpJhg18bk/KjfkK7pwDjnzXkT4ht8KlCj/hSl9LEP08dNiKYfPJ1Somsk92EwOr4eD1cmXDKDCcTnAR9DbD2sJZNS+3csqoJuzVpNFvyuSfMnMRvrrnAXRKc97lQcu3JW9yE8ib/6Mrxr7XzfQ5c6UiCbUkyR9YDC81Nh3vJG/q9CPSWwn5LZHdwrBAmKEwxo7198bN/4l7CT/nr1+mYOrKuTZeCCXy12aWUrTs8WI448uCq0NlWeMgc/53r3PYpdbdsyCpqe8y0ZprKaLF47izFPR6S4yHGOYK4mO/147guZUYxLqbdQE2aEtKNLvQlcs4IBEle8K9kg+3PSW10WUkdy9Qdrqmr1/XcKyvzrMNrQf82DhvWRFX0mect+FIst0P07YdJDksK5wzDWWBQVQFjC4moHKhcpRizyI8E57wPogR8AYsT9Q7VBj9zGOdGp2EQLDvGrqD9Ea2EAb7Zv9YiabhYdRgWWRppkIqxBduN66uQpj75bwQEffMX7H+HMOkg5bWX3YGv8OaG2dDtxuf+5FLB9tOJcAZqAOFvKcxLaddE2icx+6eCFRjFuF6tOCB9wOTszwRzmRqfsqo8JAMgpO7hn8s3zhkb6X03VNXhBvtcOvk20XYPyvaJ5iCosJjIFwbAQLsA6H5yNs7ShS6v4lX11+RjjEydYHstiRcG9by/ySEQXapm37Sd0RItu/BaomGgax/LZNn/yNvnCDGxcFN3gMa9jM3Bja2P4xb0wgx8OKDiOG1+8F612skd3p3MP7xSZPZD072mar/1kATYRhd3skNKZZjY3ihFuN3CMibqt5h+5kL2+De4k9zWv70RAtSV6CvC2GoDTHqe1NF8/xwEzusv5TGQkMQj4lyFAL84VOeWu4nbNlF1aRdyZuaiT5nr0NmNpxEuiBNNwYY+ZlpEGmhdiAMIi9Vn7YUBk1XJ6ZlwjIbC6qmJESVM3Pf4gdseLtG1xx8p9lS3hhIq+HSWZ1TYcjliAi1hCxDPUDAx+gMaOyTjPL2uliVYPd1fq07UkipshG5sIjeaM8Q8Eg/6cCnbjg5+D+ApR9AwRcR5hjRx4yH6vhH/nl5fDzcC45lTPdPKVdKsAx0FF2JXDB4yF1xAwggXTBgkqhkiG9w0BBwGgggXEBIIFwDCCBbwwggW4BgsqhkiG9w0BDAoBAqCCBTkwggU1MF8GCSqGSIb3DQEFDTBSMDEGCSqGSIb3DQEFDDAkBBBOiV9RjtVgO/OJyIEvvJU4AgIIADAMBggqhkiG9w0CCQUAMB0GCWCGSAFlAwQBKgQQwT/Fa4NKGV1yhGForoX6RASCBNDAKGWzhjd6mzFjmeIvFJreT+1rLP8z3E0BIiZVcq+qd8J8nWqAu8RYmFx4GqYpA1eTYIpwHzvfz1kOvbyorqFvZBHyAnTcn/HO4eQMpQy9fVgPwq3artiiEJ9MVlfnLLuHVlV0No50oiYpophvWGxRvVD3NnwGdyzKxrLO4bgU6fbmq2ZGBH1R52Oj6q2eS1NXvb6JsYUqDplT7xslZyOiaZByzf4KpRaUScVY6r8JhBwzsUaocQ1DliEo2c6bQkNQwAwU3pLVuKiSidcWUxJuIEHovHoOYObe+PZk+wGFTUnLlm7BzPUP2k0bQ8NEqSkofRZud7SQJwTf4r7L5xwWw3Rj+IOBdo/m3TS7oa9GZd6N1Rb2WPbNhH6O0XFmj4/wHYsxhtHWor5joqih5TMLiD7G8kbF9J4tbao3Ldai4scKwwO9hqPOGkOeGIylPPqA//00E5v712CPVm5AyEu7OOuSIR7w3IeNwl25VnJUJ+OVdsY6vpFBtIovAPGXIU1QYlWGf5FeEUHtxX+kX0YzX9ZyZkpyeUh3eEmCg5d0wDmM9p8EU23fADOJZDAsgwuxQc1TvW6sCJkkjTtlE5OS/ASFWc1NpqjfC8SphRA3sS2LkdR7/MJnGeBo+Pyh14mKreJ7lApBaSu9j0lkyOgH8t8L0sabRXET1/dHOpzkPkFAOA/MKM+1UWJIQ1sjkWwZcoXNWxBpaUx1+sRQgvD+jReYbZwFMLLLf8SNJfN5l9UztcO92dlQpywx2aE34VHWp/kp2iYwWMXhuCN0gCEER/wCCdbK3APlwwH/vtOjmGWh3RA8yHP3z6OnNvZChOGF2ZiNdcC0TkBToiazCB7FIFrI/CYO8ZcFaGPww9gIuokMk0Z+hBWa8MaSkLNeNFEFohWRmVT7CmLLKCjcB0zHsub2O5To8SjUBf7B5h6LgSx8Lgs3Tiz+C9YQQD1bgb5YD1wW07Q1wWtVNYZf78PrsRwxZfArcMNIBSCa6dSUWXbOVbNKQeJc9dkI9vMR+VTsQ1ybgq3W96dhTz9b+Ob4x5h2FMG1BPk0vZvFqJI7PYH2lwSaP48cLHXAaP4pae/8ROt2D6a/ESnBfQF2yXZ0tcBI7mHpN/74TZCd0iHW36bbahupjgWTPvNx7IgELY/9bor/l7jq9ST92uK09XXFtanOJRTlMkIMmLj/fMGHWUyKd39yhLcN4ZeAiUWXHZriN79cNret5Et9rAaWn9ZaJb6F1VnxfNuqPyjYzwLRPq/75Oui3yiKXs07zC1vM0nGBmxGHwZ8VPl2qSTOLkz6h2LUqDHafX2Q/Az3DUv62aby/Fz/rgEURsSMcN2z3sro3ta9gjitugvJEPygU6Pm7IpqMbqbRmKVLVzKz5Rr0iaySUeYLia5e4QbhbTGlIpPu4ww4d6hgEehHaHNyneGxrSc1jCnnNjw8g0S7XH58GLz73yvTsJhXzzSBe39FhICxhazYMBN3Hq4ToJdkTXkuhtAUPgDu4N2igZ1i1kjTd/oPJ5Wew2SgMNrgVLOeY/Srbt37HhOpgdiKKFix2YaIHpRlzJNiFK4BQ/qtItztMlhWb5ipHmcb9i44YrF9Xg1sCVZ2xGKaqbrhEkd8GWaILgj+52fKRf57EFvjAu/CDFsMCMGCSqGSIb3DQEJFTEWBBSLsxfxQJAlJF9tx0qqI7gtr++9iTBFBgkqhkiG9w0BCRQxOB42AFMAdQByAGcAZQAgAEcAZQBuAGUAcgBhAHQAZQBkACAAQwBBACAAQgAzADAANAA2AEIAMwBFMDkwITAJBgUrDgMCGgUABBREcITM5/o7XMreduoi2TeVinS2fAQQ3DJQdSAKU601y/cEkaM/XwICCAA=
+  ca_passphrase: B3046B3E
+  hostnames:
+    includes:
+    - u.711.lol
+    - www.google.cn
+    - api.abema.io
+    - '*.zhihu.com'
+    excludes:
+    - CUSTOMMitM
+panels:
+- name: flushDNS
+  script_name: flushDNS
+  update_interval: -1
+modules:
+- url: https://github.com/BiliUniverse/Enhanced/releases/latest/download/BiliBili.Enhanced.sgmodule
+  enabled: true
+- url: https://github.com/kokoryh/Sparkle/raw/refs/heads/master/release/surge/module/bilibili.sgmodule
+  enabled: true
+- url: http://script.hub/file/_start_/https://kelee.one/Tool/Loon/Lpx/AppleWeatherEnhancer.lpx/_end_/AppleWeatherEnhancer.sgmodule?type=loon-plugin&target=surge-module&del=true&jqEnabled=true&pm=.&sni=.
+  enabled: true
+- url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Module/Vvebo 时间线修复.sgmodule
+  enabled: true
+- url: https://raw.githubusercontent.com/chavyleung/scripts/master/box/rewrite/boxjs.rewrite.surge.sgmodule
+  enabled: true
+- url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/modules/script-hub.surge.sgmodule
+  enabled: true
+- url: https://raw.githubusercontent.com/Yu9191/Rewrite/refs/heads/main/pluginhub.sgmodule
+  enabled: true
