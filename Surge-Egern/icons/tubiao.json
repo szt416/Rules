@@ -1,0 +1,406 @@
+{
+  "name": "tubiao",
+  "description": "Icons from luestr/IconResource App_icon/120px",
+  "icons": [
+    {
+      "name": "1.1.1.1",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/1.1.1.1.png"
+    },
+    {
+      "name": "12306",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/12306.png"
+    },
+    {
+      "name": "123NetWorkDisk",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/123NetWorkDisk.png"
+    },
+    {
+      "name": "1919",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/1919.png"
+    },
+    {
+      "name": "2bulu",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/2bulu.png"
+    },
+    {
+      "name": "360SmartCamera",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/360SmartCamera.png"
+    },
+    {
+      "name": "36Kr",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/36Kr.png"
+    },
+    {
+      "name": "51Job",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/51Job.png"
+    },
+    {
+      "name": "555DY",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/555DY.png"
+    },
+    {
+      "name": "91160",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/91160.png"
+    },
+    {
+      "name": "AIWanJuan",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AIWanJuan.png"
+    },
+    {
+      "name": "Adobe_Creative_Cloud",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Adobe_Creative_Cloud.png"
+    },
+    {
+      "name": "Agenda",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Agenda.png"
+    },
+    {
+      "name": "Aiinquiry",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Aiinquiry.png"
+    },
+    {
+      "name": "AliPay",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AliPay.png"
+    },
+    {
+      "name": "AliYunDrive",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AliYunDrive.png"
+    },
+    {
+      "name": "Amap",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Amap.png"
+    },
+    {
+      "name": "AnyVideoBox",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AnyVideoBox.png"
+    },
+    {
+      "name": "AppRaven",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AppRaven.png"
+    },
+    {
+      "name": "AppleWeather",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AppleWeather.png"
+    },
+    {
+      "name": "Asspp",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Asspp.png"
+    },
+    {
+      "name": "Audiomack",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Audiomack.png"
+    },
+    {
+      "name": "AutoHome",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/AutoHome.png"
+    },
+    {
+      "name": "BabyTree",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BabyTree.png"
+    },
+    {
+      "name": "BaiCiZhan",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiCiZhan.png"
+    },
+    {
+      "name": "Baidu",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Baidu.png"
+    },
+    {
+      "name": "BaiduMap",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduMap.png"
+    },
+    {
+      "name": "BaiduNetDisk",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduNetDisk.png"
+    },
+    {
+      "name": "BaiduPhoto",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduPhoto.png"
+    },
+    {
+      "name": "BaiduWenku",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BaiduWenku.png"
+    },
+    {
+      "name": "Baidu_input_method",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Baidu_input_method.png"
+    },
+    {
+      "name": "Bcy",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bcy.png"
+    },
+    {
+      "name": "Beike",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Beike.png"
+    },
+    {
+      "name": "BestWall",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BestWall.png"
+    },
+    {
+      "name": "BiliComic",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BiliComic.png"
+    },
+    {
+      "name": "Bilibili",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png"
+    },
+    {
+      "name": "Bing",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bing.png"
+    },
+    {
+      "name": "BitqiuPan",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BitqiuPan.png"
+    },
+    {
+      "name": "Bixin",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bixin.png"
+    },
+    {
+      "name": "Bluesky",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bluesky.png"
+    },
+    {
+      "name": "BodianMusic",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BodianMusic.png"
+    },
+    {
+      "name": "BooHee",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/BooHee.png"
+    },
+    {
+      "name": "CCLive",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CCLive.png"
+    },
+    {
+      "name": "CF_Bible",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CF_Bible.png"
+    },
+    {
+      "name": "CSG",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CSG.png"
+    },
+    {
+      "name": "CaiLianShe",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CaiLianShe.png"
+    },
+    {
+      "name": "Cainiao",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Cainiao.png"
+    },
+    {
+      "name": "CaixinMedia",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CaixinMedia.png"
+    },
+    {
+      "name": "CatEarFM",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CatEarFM.png"
+    },
+    {
+      "name": "Cece",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Cece.png"
+    },
+    {
+      "name": "Changba",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Changba.png"
+    },
+    {
+      "name": "ChatGPT",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChatGPT.png"
+    },
+    {
+      "name": "ChengFenMiao",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChengFenMiao.png"
+    },
+    {
+      "name": "ChinaMobile",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChinaMobile.png"
+    },
+    {
+      "name": "ChinaTetlcom",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChinaTetlcom.png"
+    },
+    {
+      "name": "ChinaUnicom",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ChinaUnicom.png"
+    },
+    {
+      "name": "Chuzhan",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Chuzhan.png"
+    },
+    {
+      "name": "Claude",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Claude.png"
+    },
+    {
+      "name": "ColorfulClouds",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ColorfulClouds.png"
+    },
+    {
+      "name": "ColorfulCloudsPro",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/ColorfulCloudsPro.png"
+    },
+    {
+      "name": "CoolApk",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CoolApk.png"
+    },
+    {
+      "name": "CosmosPodcast",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/CosmosPodcast.png"
+    },
+    {
+      "name": "Ctrip",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Ctrip.png"
+    },
+    {
+      "name": "Cubox",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Cubox.png"
+    },
+    {
+      "name": "DREAME",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DREAME.png"
+    },
+    {
+      "name": "Daily",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Daily.png"
+    },
+    {
+      "name": "Damai",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Damai.png"
+    },
+    {
+      "name": "Darkroom",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Darkroom.png"
+    },
+    {
+      "name": "Dazn",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Dazn.png"
+    },
+    {
+      "name": "DeepL",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DeepL.png"
+    },
+    {
+      "name": "DeepSeek",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DeepSeek.png"
+    },
+    {
+      "name": "Dewu",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Dewu.png"
+    },
+    {
+      "name": "DiDi",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DiDi.png"
+    },
+    {
+      "name": "DidaPincheTaxi",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DidaPincheTaxi.png"
+    },
+    {
+      "name": "DigitalHeartbeat",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DigitalHeartbeat.png"
+    },
+    {
+      "name": "DingdongMaicai",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DingdongMaicai.png"
+    },
+    {
+      "name": "Discord",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Discord.png"
+    },
+    {
+      "name": "Discovery+",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Discovery+.png"
+    },
+    {
+      "name": "Disney+",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Disney+.png"
+    },
+    {
+      "name": "Dlabel",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Dlabel.png"
+    },
+    {
+      "name": "Documents",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Documents.png"
+    },
+    {
+      "name": "DouBan",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DouBan.png"
+    },
+    {
+      "name": "DoubanRead",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DoubanRead.png"
+    },
+    {
+      "name": "Douyu",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Douyu.png"
+    },
+    {
+      "name": "Drafts",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Drafts.png"
+    },
+    {
+      "name": "DragonRead",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DragonRead.png"
+    },
+    {
+      "name": "DubbingShow",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DubbingShow.png"
+    },
+    {
+      "name": "DuiTang",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DuiTang.png"
+    },
+    {
+      "name": "EcovacsHome",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/EcovacsHome.png"
+    },
+    {
+      "name": "Elk",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Elk.png"
+    },
+    {
+      "name": "Emby",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Emby.png"
+    },
+    {
+      "name": "Enpass_Password_Manager",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Enpass_Password_Manager.png"
+    },
+    {
+      "name": "EtouchEcalendar",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/EtouchEcalendar.png"
+    },
+    {
+      "name": "EveryoneVideo",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/EveryoneVideo.png"
+    },
+    {
+      "name": "FC_Box",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FC_Box.png"
+    },
+    {
+      "name": "FeeyoVeryZhunLITE",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FeeyoVeryZhunLITE.png"
+    },
+    {
+      "name": "FenBi",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FenBi.png"
+    },
+    {
+      "name": "FenxiangLife",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FenxiangLife.png"
+    },
+    {
+      "name": "FerrisWheel",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FerrisWheel.png"
+    },
+    {
+      "name": "Fileball",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Fileball.png"
+    }
+  ]
+}
