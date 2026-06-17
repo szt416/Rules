@@ -1,6 +1,8 @@
-#!name=Spotify(>=iOS15)
-#!desc=2025.06.27 部分解锁premium,音质不能设置为超高(建议登录后再打开脚本,重启app等待脚本生效)
-# 仓库地址 https://github.com/app2smile/rules
+#!name=Spotify_Premium
+#!desc=2025.06.27 部分解锁premium,音质不能设置为超高(建议登录后再打开脚本,重启app等待脚本生效)(>=iOS15)
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/refs/heads/main/App_icon/120px/Spotify.png
+# 原仓库地址 https://github.com/app2smile/rules
+# 二改仓库地址 https://github.com/szt416/Rules
 # 功能: 1.去除播放广告 2.歌手/专辑列表正常展示 3.去除随机播放
 
 [Header Rewrite]
