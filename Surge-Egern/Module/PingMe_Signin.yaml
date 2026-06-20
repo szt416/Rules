@@ -1,5 +1,5 @@
 name: PingMe 签到与 Cookie 获取
-description: PingMe 自动签到及 Cookie 获取模块。支持自定义签到时间及脚本响应等待时间。
+description: PingMe 自动签到及 Cookie 获取模块。支持自定义签到时间及脚本响应等待时间。首次使用需进入APP获取cookie。
 compat_arguments:
   PingMeCookie: 'true'
   PingMeCron: 30 8,20 * * *
@@ -33,7 +33,7 @@ scriptings:
 - schedule:
     name: PingMe签到
     cron: 30 8,20 * * *
-    script_url: https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PingMe/PingMeSignin.js
+    script_url: https://github.com/szt416/Rules/blob/main/Surge-Egern/Scripts/PingMe/PingMe_Signin.js
     timeout: 60
 - http_request:
     name: PingMe获取Cookie
