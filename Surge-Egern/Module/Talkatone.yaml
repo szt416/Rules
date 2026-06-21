@@ -1,100 +1,37 @@
-name: Talkatone
-description: 去广告, 解除节点限制
-compat_arguments:
-  策略: Proxy
-compat_arguments_schema:
-  策略:
-    name: '[策略] Talkatone 节点策略'
-    description: 选择 Talkatone 使用的代理策略，请确保名称与你 Egern 里的策略组名称一致
-    default_value: Talkatone
-    options:
-    - Talkatone
-    - DIRECT
-    - REJECT
-author: Xiong
-homepage: https://github.com/
-icon: https://raw.githubusercontent.com/luestr/IconResource/refs/heads/main/App_icon/120px/Talkatone.png
+#!name=Talkatone
+#!desc=去广告, 解除节点限制
+#!category=广告模块
+#!arguments=策略:Proxy
+#icon=https://raw.githubusercontent.com/luestr/IconResource/refs/heads/main/App_icon/120px/Talkatone.png
 
-rules:
-- domain_suffix:
-    match: ads.inmobi.com
-    policy: REJECT
-- domain_suffix:
-    match: tappx.com
-    policy: REJECT
-- domain_suffix:
-    match: criteo.com
-    policy: REJECT
-- domain_suffix:
-    match: pubmatic.com
-    policy: REJECT
-- domain_suffix:
-    match: smaato.net
-    policy: REJECT
-- domain_suffix:
-    match: amazon-adsystem.com
-    policy: REJECT
-- domain_suffix:
-    match: googleads.g.doubleclick.net
-    policy: REJECT
-- domain_suffix:
-    match: adsappier.com
-    policy: REJECT
-- domain_suffix:
-    match: appier.net
-    policy: REJECT
-- domain_suffix:
-    match: appiersig.com
-    policy: REJECT
+[Rule]
+#-----REJECT-----#
+DOMAIN-SUFFIX,ads.inmobi.com,REJECT-DROP
+DOMAIN-SUFFIX,tappx.com,REJECT-DROP
+DOMAIN-SUFFIX,criteo.com,REJECT-DROP
+DOMAIN-SUFFIX,pubmatic.com,REJECT-DROP
+DOMAIN-SUFFIX,smaato.net,REJECT-DROP
+DOMAIN-SUFFIX,amazon-adsystem.com,REJECT-DROP
+DOMAIN-SUFFIX,googleads.g.doubleclick.net,REJECT-DROP
+DOMAIN-SUFFIX,adsappier.com,REJECT-DROP
+DOMAIN-SUFFIX,appier.net,REJECT-DROP
+DOMAIN-SUFFIX,appiersig.com,REJECT-DROP
 
-- domain_suffix:
-    match: tktn.be
-    policy: '{{{策略}}}'
+#-----PROXY-----#
+DOMAIN-SUFFIX,tktn.be,{{{策略}}}
 
-- domain_suffix:
-    match: inner-active.mobi
-    policy: DIRECT
-- domain_suffix:
-    match: mobilefuse.com
-    policy: DIRECT
-- domain_suffix:
-    match: inmobi.com
-    policy: DIRECT
-- domain_suffix:
-    match: crashlytics.com
-    policy: DIRECT
-- domain_suffix:
-    match: talkatone.com
-    policy: DIRECT
-- domain_suffix:
-    match: kochava.com
-    policy: DIRECT
-- domain_suffix:
-    match: cohere.com
-    policy: DIRECT
-- domain_suffix:
-    match: ip-api.com
-    policy: DIRECT
-- domain_suffix:
-    match: agkn.com
-    policy: DIRECT
-- domain_suffix:
-    match: tktn.at
-    policy: DIRECT
-
-- ip_cidr:
-    match: 50.117.27.0/24
-    policy: DIRECT
-    no_resolve: true
-- ip_cidr:
-    match: 69.46.75.0/24
-    policy: DIRECT
-    no_resolve: true
-- ip_cidr:
-    match: 205.164.56.0/24
-    policy: DIRECT
-    no_resolve: true
-- ip_cidr:
-    match: 63.251.124.0/24
-    policy: DIRECT
-    no_resolve: true
+#-----DIRECT-----#
+DOMAIN-SUFFIX,inner-active.mobi,DIRECT
+DOMAIN-SUFFIX,mobilefuse.com,DIRECT
+DOMAIN-SUFFIX,inmobi.com,DIRECT
+DOMAIN-SUFFIX,crashlytics.com,DIRECT
+DOMAIN-SUFFIX,talkatone.com,DIRECT
+DOMAIN-SUFFIX,kochava.com,DIRECT
+DOMAIN-SUFFIX,cohere.com,DIRECT
+DOMAIN-SUFFIX,ip-api.com,DIRECT
+DOMAIN-SUFFIX,agkn.com,DIRECT
+DOMAIN-SUFFIX,tktn.at,DIRECT
+IP-CIDR,50.117.27.0/24,DIRECT,no-resolve
+IP-CIDR,69.46.75.0/24,DIRECT,no-resolve
+IP-CIDR,205.164.56.0/24,DIRECT,no-resolve
+IP-CIDR,63.251.124.0/24,DIRECT,no-resolve
