@@ -2,7 +2,7 @@
 #!desc=去广告, 解除节点限制
 #!category=广告模块
 #!arguments=策略:Proxy
-#icon=https://raw.githubusercontent.com/luestr/IconResource/refs/heads/main/App_icon/120px/Talkatone.png
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/refs/heads/main/App_icon/120px/Talkatone.png
 
 [Rule]
 #-----REJECT-----#
