@@ -13,6 +13,7 @@ const SCHEME = {
   iMe: "ime",
   Nicegram: "ng",
   Lingogram: "lingo",
+  Nagram: "ng",
 };
 
 function qval(qs, key) {
