@@ -4,6 +4,8 @@
  * 说明：
  * - 客户端选择通过模块的 env_schema 写入模块级 env
  * - 脚本直接读取 ctx.env.CLIENT
+ * Nagram: " "
+ * Mithka: " "
  */
 
 const SCHEME = {
@@ -13,8 +15,6 @@ const SCHEME = {
   iMe: "ime",
   Nicegram: "ng",
   Lingogram: "lingo",
-  Nagram: "ng",
-  Mithka: "mk",
 };
 
 function qval(qs, key) {
