@@ -1,0 +1,47 @@
+DOMAIN, 5ca70e79098e6a75e5629ac024994050.rdt.tfogc.com
+DOMAIN, ad-api.adn-plus.com.cn
+DOMAIN, adsmind.ugdtimg.com
+DOMAIN, adx-bj.anythinktech.com
+DOMAIN, adx-data-u1.ubixioe.com
+DOMAIN, ali-stats.jpush.cn
+DOMAIN, api.gongkaoleida.com
+DOMAIN, api.weixin.qq.com
+DOMAIN, aspect-upush.umeng.com
+DOMAIN, b09f000ed1493a8eebc440404a436426.rdt.tfogc.com
+DOMAIN, bugly.qq.com
+DOMAIN, cdn.1rtb.com
+DOMAIN, ce3e75d5.jpush.cn
+DOMAIN, cnlogs.umeng.com
+DOMAIN, da.statisticslinks.com
+DOMAIN, de.ad.gameley.com
+DOMAIN, dispatcher.is.autonavi.com
+DOMAIN, e-u1.ubixioe.com
+DOMAIN, entry-su1.ubixioe.com
+DOMAIN, gd-stats.jpush.cn
+DOMAIN, gdt.qq.com
+DOMAIN, jp.ad.gameley.com
+DOMAIN, mores.motowoo.com
+DOMAIN, p4-lm.adukwai.com
+DOMAIN, pgdt.ugdtimg.com
+DOMAIN, qzs.gdtimg.com
+DOMAIN, report.gongkaoleida.com
+DOMAIN, s.funlinkads.com
+DOMAIN, s3plus.meituan.net
+DOMAIN, sdk.1rtb.net
+DOMAIN, sdk.beizi.biz
+DOMAIN, sdk.e.qq.com
+DOMAIN, static.gongkaoleida.com
+DOMAIN, thirdwx.qlogo.cn
+DOMAIN, tk.anythinktech.com
+DOMAIN, tk.statisticslinks.com
+DOMAIN, ucc.umeng.com
+DOMAIN, ujoy.anythinktech.com
+DOMAIN, utoken.umeng.com
+IP-CIDR, 1.92.70.140/32, no-resolve
+IP-CIDR, 1.94.190.95/32, no-resolve
+IP-CIDR, 115.120.193.179/32, no-resolve
+IP-CIDR, 121.36.205.81/32, no-resolve
+IP-CIDR, 198.18.13.171/32, no-resolve
+IP-CIDR, 198.18.8.51/32, no-resolve
+IP-CIDR, 203.107.1.0/24, no-resolve
+IP-CIDR, 203.119.204.226/32, no-resolve
