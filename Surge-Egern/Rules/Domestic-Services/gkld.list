@@ -41,7 +41,5 @@ IP-CIDR, 1.92.70.140/32, no-resolve
 IP-CIDR, 1.94.190.95/32, no-resolve
 IP-CIDR, 115.120.193.179/32, no-resolve
 IP-CIDR, 121.36.205.81/32, no-resolve
-IP-CIDR, 198.18.13.171/32, no-resolve
-IP-CIDR, 198.18.8.51/32, no-resolve
 IP-CIDR, 203.107.1.0/24, no-resolve
 IP-CIDR, 203.119.204.226/32, no-resolve
