@@ -14,7 +14,8 @@ env_schema:
       - iMe
       - Nicegram
       - Lingogram
-
+      - Nagram
+      
 scriptings:
   - http_request:
       name: "Telegram 链接重定向"
