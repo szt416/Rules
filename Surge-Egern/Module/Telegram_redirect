@@ -1,0 +1,92 @@
+name: TeleOpenLink
+description: Telegram 外部链接跳转至指定客户端
+author: Szt416
+homepage: https://github.com/Likhixang
+icon: https://iili.io/KQX347S.png
+
+compat_arguments:
+  Client: sg
+
+compat_arguments_schema:
+  Client:
+    name: '[客户端] Telegram 跳转目标'
+    description: 选择目标 Telegram 客户端 URL Scheme
+    default_value: sg
+    options:
+    - tg
+    - sg
+    - gg
+    - ghostgram
+    - turrit
+    - ime
+    - ng
+    - lingo
+
+compat_arguments_desc: |-
+  Client：目标客户端 URL scheme
+  Telegram: tg
+  Swiftgram: sg
+  Ghostgram: gg 或 ghostgram
+  Turrit: turrit
+  iMe: ime
+  Nicegram: ng
+  Lingogram: lingo
+
+url_rewrites:
+# s/ 短链 — 指定消息
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/s\/([A-Za-z0-9_]+)\/([0-9]+)$'
+  location: '{{{Client}}}://resolve?domain=$3&post=$4'
+  status_code: 302
+
+# s/ 短链 — 用户 / 频道 / 群组
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/s\/([A-Za-z0-9_]+)$'
+  location: '{{{Client}}}://resolve?domain=$3'
+  status_code: 302
+
+# 贴纸包
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/addstickers\/(.+)$'
+  location: '{{{Client}}}://addstickers?set=$3'
+  status_code: 302
+
+# 分享 URL
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/share\/url\?(.+)$'
+  location: '{{{Client}}}://msg_url?$3'
+  status_code: 302
+
+# 用户 / 频道 / 群组（不含查询参数）
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/([A-Za-z0-9_]+)$'
+  location: '{{{Client}}}://resolve?domain=$3'
+  status_code: 302
+
+# Bot 链接（含 start 等查询参数，原样透传）
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/([A-Za-z0-9_]+)\?(.+)$'
+  location: '{{{Client}}}://resolve?domain=$3&$4'
+  status_code: 302
+
+# 指定消息
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/([A-Za-z0-9_]+)\/([0-9]+)$'
+  location: '{{{Client}}}://resolve?domain=$3&post=$4'
+  status_code: 302
+
+# 邀请链接（joinchat / +）
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/(joinchat\/|\+)([A-Za-z0-9_-]+)$'
+  location: '{{{Client}}}://join?invite=$4'
+  status_code: 302
+
+# 私有频道消息
+- match: '^(https:\/\/)?(t\.me|telegram\.me|telegram\.dog)\/c\/([0-9]+)\/([0-9]+)$'
+  location: '{{{Client}}}://privatepost?channel=$3&post=$4'
+  status_code: 302
+
+# 预览页
+- match: '^(https:\/\/)?telesco\.pe\/(.+)$'
+  location: '{{{Client}}}://resolve?domain=$2'
+  status_code: 302
+
+mitm:
+  hostnames:
+    includes:
+    - t.me
+    - telegram.me
+    - telegram.dog
+    - telesco.pe
