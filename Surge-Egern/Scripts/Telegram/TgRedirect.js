@@ -14,6 +14,7 @@ const SCHEME = {
   Nicegram: "ng",
   Lingogram: "lingo",
   Nagram: "ng",
+  Mithka: "mk",
 };
 
 function qval(qs, key) {
