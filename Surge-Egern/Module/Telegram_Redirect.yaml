@@ -16,6 +16,7 @@ env_schema:
       - Lingogram
       - Nagram
       - Mithka
+      
 scriptings:
   - http_request:
       name: "Telegram 链接重定向"
