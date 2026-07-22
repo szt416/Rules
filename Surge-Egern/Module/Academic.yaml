@@ -14,10 +14,7 @@ compat_arguments_desc: |
   或 Egern 配置中已经存在的其他策略组名称。
 
 rules:
-  # ─────────────────────────────
   # 科研软件与数据库
-  # ─────────────────────────────
-
   - domain:
       match: "manual.gromacs.org"
       policy: "{{{POLICY}}}"
@@ -58,10 +55,7 @@ rules:
       match: "iresearchbook.cn"
       policy: "{{{POLICY}}}"
 
-  # ─────────────────────────────
   # 学术出版社与期刊平台
-  # ─────────────────────────────
-
   - domain_suffix:
       match: "wiley.com"
       policy: "{{{POLICY}}}"
@@ -110,11 +104,11 @@ rules:
       match: "apsnet.org"
       policy: "{{{POLICY}}}"
 
+  - domain_suffix:
+      match: "manuscriptcentral.com"
+      policy: "{{{POLICY}}}"
 
-  # ─────────────────────────────
   # 固定拦截，不跟随 POLICY
-  # ─────────────────────────────
-
   - domain_suffix:
       match: "adobe.io"
       policy: "REJECT"
