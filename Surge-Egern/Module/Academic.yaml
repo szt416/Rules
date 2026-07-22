@@ -1,7 +1,7 @@
 name: "科研与常用网站分流"
 description: "科研数据库、学术出版社分流"
 author: "Szt416"
-icon: ""
+icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/NCBI.png"
 
 compat_arguments:
   POLICY: "DIRECT"
