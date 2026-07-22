@@ -1,0 +1,120 @@
+name: "科研与常用网站分流"
+description: "科研数据库、学术出版社分流"
+author: "Szt416"
+icon: ""
+
+compat_arguments:
+  POLICY: "DIRECT"
+
+compat_arguments_desc: |
+  POLICY 为学术及常用网站使用的分流策略。
+  可填写：
+  DIRECT
+  REJECT
+  或 Egern 配置中已经存在的其他策略组名称。
+
+rules:
+  # ─────────────────────────────
+  # 科研软件与数据库
+  # ─────────────────────────────
+
+  - domain:
+      match: "manual.gromacs.org"
+      policy: "{{{POLICY}}}"
+
+  - domain_keyword:
+      match: "sci-hub"
+      policy: "{{{POLICY}}}"
+
+  - domain_keyword:
+      match: "ncbi"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "ccdc.cam.ac.uk"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "cas.org"
+      policy: "{{{POLICY}}}"
+
+  - domain_keyword:
+      match: "scifinder"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "clarivate.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "webofscience.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "webofknowledge.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "iresearchbook.cn"
+      policy: "{{{POLICY}}}"
+
+  # ─────────────────────────────
+  # 学术出版社与期刊平台
+  # ─────────────────────────────
+
+  - domain_suffix:
+      match: "wiley.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "onlinelibrary.wiley.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "sciencedirect.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "elsevier.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "nature.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "springer.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "springerlink.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "tandfonline.com"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "acs.org"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "rsc.org"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "scitation.org"
+      policy: "{{{POLICY}}}"
+
+  - domain_suffix:
+      match: "apsnet.org"
+      policy: "{{{POLICY}}}"
+
+
+  # ─────────────────────────────
+  # 固定拦截，不跟随 POLICY
+  # ─────────────────────────────
+
+  - domain_suffix:
+      match: "adobe.io"
+      policy: "REJECT"
