@@ -1,0 +1,28 @@
+# 科研与常用网站分流
+# Author: Szt416
+
+# 科研软件与数据库
+DOMAIN,manual.gromacs.org
+DOMAIN-KEYWORD,sci-hub
+DOMAIN-KEYWORD,ncbi
+DOMAIN-SUFFIX,ccdc.cam.ac.uk
+DOMAIN-SUFFIX,cas.org
+DOMAIN-KEYWORD,scifinder
+DOMAIN-SUFFIX,clarivate.com
+DOMAIN-SUFFIX,webofscience.com
+DOMAIN-SUFFIX,webofknowledge.com
+DOMAIN-SUFFIX,iresearchbook.cn
+
+# 学术出版社与期刊平台
+DOMAIN-SUFFIX,wiley.com
+DOMAIN-SUFFIX,sciencedirect.com
+DOMAIN-SUFFIX,elsevier.com
+DOMAIN-SUFFIX,nature.com
+DOMAIN-SUFFIX,springer.com
+DOMAIN-SUFFIX,springerlink.com
+DOMAIN-SUFFIX,tandfonline.com
+DOMAIN-SUFFIX,acs.org
+DOMAIN-SUFFIX,rsc.org
+DOMAIN-SUFFIX,scitation.org
+DOMAIN-SUFFIX,apsnet.org
+DOMAIN-SUFFIX,manuscriptcentral.com
