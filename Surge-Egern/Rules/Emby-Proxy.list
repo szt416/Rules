@@ -1,3 +1,5 @@
+#name：Emby代理分流规则
+#describe：请勿外传，请勿公开，请勿宣传
 #东影
 DOMAIN-KEYWORD,funmedia
 #天南
