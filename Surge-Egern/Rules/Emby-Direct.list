@@ -1,3 +1,5 @@
+#name：Emby直连分流规则
+#describe：请勿外传，请勿公开，请勿宣传
 #自用反代
 DOMAIN-SUFFIX,szt.dpdns.org
 DOMAIN-SUFFIX,kimhamburger.dpdns.org
