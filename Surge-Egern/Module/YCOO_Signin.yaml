@@ -17,7 +17,7 @@ compat_arguments_desc: |
 env_schema:
   ENABLE_CAPTURE:
     name: "Cookie 捕获"
-    description: "首次使用时开启，登录 ycoo.net 后访问『源签到』页面；收到成功通知后关闭。"
+    description: "首次使用时开启，登录 ycoo.net 后访问『 每日签到』页面；收到成功通知后关闭。"
     default_value: "false"
     options:
       - "false"
