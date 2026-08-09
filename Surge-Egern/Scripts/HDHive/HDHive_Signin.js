@@ -2,7 +2,6 @@
  * HDHive 自动签到
  * Egern 专用
  *
- *
  * 普通签到:
  * [false]
  *
@@ -14,9 +13,12 @@
 const env = $environment || {};
 
 
-const cookie = env.HDHIVE_COOKIE || "";
+const cookie =
+env.HDHIVE_COOKIE || "";
 
-const mode = env.SIGN_MODE || "全部签到";
+
+const mode =
+env.SIGN_MODE || "全部签到";
 
 
 const ACTION_ID =
@@ -26,7 +28,7 @@ const ACTION_ID =
 
 if (!cookie) {
 
-  $notify(
+  $notification.post(
     "HDHive签到",
     "失败",
     "未配置 Cookie"
@@ -102,7 +104,7 @@ function checkin(body, name) {
 
 
         else if(
-          data.includes("成功")
+          data.includes("签到成功")
           ||
           data.includes("\"success\":true")
         ){
@@ -181,10 +183,14 @@ function checkin(body, name) {
 
 
 
-  $notify(
+  $notification.post(
+
     "HDHive签到完成",
+
     mode,
+
     result.join("\n")
+
   );
 
 
