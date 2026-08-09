@@ -1,0 +1,48 @@
+name: "源论坛 YCOO 签到"
+description: "ycoo.net 自动签到：首次开启 Cookie 捕获并访问源签到页面保存登录信息，之后每天定时自动签到。"
+author: "Szt416"
+icon: ""
+
+compat_arguments:
+  MINUTE: "05"
+  HOUR: "09"
+  ENABLE_CAPTURE: "false"
+
+compat_arguments_desc: |
+  MINUTE=签到分钟
+  HOUR=签到小时（24小时制）
+  ENABLE_CAPTURE=Cookie 捕获（true 开 / false 关）
+
+# 时间使用 Template Arguments；Cookie 捕获可在模块设置中开关
+env_schema:
+  ENABLE_CAPTURE:
+    name: "Cookie 捕获"
+    description: "首次使用时开启，登录 ycoo.net 后访问『源签到』页面；收到成功通知后关闭。"
+    default_value: "false"
+    options:
+      - "false"
+      - "true"
+
+mitm:
+  hostnames:
+    - "ycoo.net"
+    - "www.ycoo.net"
+
+scriptings:
+  - http_response:
+      name: "源论坛 Cookie"
+      match: "^https://(?:www\\.)?ycoo\\.net/k_misign-sign\\.html(?:\\?.*)?$"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin.js"
+      body_required: false
+      timeout: 30
+      max_size: 1048576
+      env:
+        ENABLE_CAPTURE: "{{{ENABLE_CAPTURE}}}"
+
+  - schedule:
+      name: "源论坛签到"
+      cron: "{{{MINUTE}}} {{{HOUR}}} * * *"
+      timeout: 60
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin.js"
+      env:
+        MODE: "checkin"
