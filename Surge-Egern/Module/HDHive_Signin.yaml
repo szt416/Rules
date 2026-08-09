@@ -13,7 +13,7 @@ env_schema:
   SIGN_MODE:
     name: "签到模式"
     description: "选择签到方式"
-    default_value: "全部签到"
+    default_value: "赌狗签到"
     options:
       - "普通签到"
       - "赌狗签到"
