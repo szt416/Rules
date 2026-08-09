@@ -1,7 +1,6 @@
 name: "HDHive 自动签到"
 description: "HDHive 每日签到和赌狗签到"
 author: "Szt416"
-
 icon: "checkmark.circle.fill"
 
 env_schema:
