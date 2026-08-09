@@ -2,11 +2,8 @@
  * HDHive 自动签到
  * Egern Script
  *
- * 普通签到:
- * [false]
- *
- * 赌狗签到:
- * [true]
+ * 普通签到 [false]
+ * 赌狗签到 [true]
  */
 
 
@@ -18,12 +15,16 @@ const cookie =
 $argument.HDHIVE_COOKIE || "";
 
 
+const mode =
+$argument.SIGN_MODE || "全部签到";
+
+
 if (!cookie) {
 
   $notification.post(
     "HDHive签到",
     "失败",
-    "未填写 Cookie"
+    "未配置 Cookie"
   );
 
   $done();
@@ -32,56 +33,66 @@ if (!cookie) {
 
 
 
-function sign(body, name) {
+function doCheck(body, title){
 
 
-  return new Promise((resolve)=>{
+  return new Promise(resolve=>{
 
 
-    $httpClient.post({
+    $httpClient.post(
+
+    {
 
       url:
       "https://hdhive.com/",
 
 
-      headers: {
+      headers:
+      {
 
         "Accept":
         "text/x-component",
 
+
         "Content-Type":
         "text/plain;charset=UTF-8",
+
 
         "Origin":
         "https://hdhive.com",
 
+
         "Referer":
         "https://hdhive.com/",
+
 
         "next-action":
         ACTION_ID,
 
+
         "Cookie":
         cookie
+
       },
 
 
-      body: body
+      body:
+      body
 
 
     },
 
 
-    function(error, response, data){
+    (error,response,data)=>{
 
 
-      let msg = "";
+      let result="";
 
 
       if(error){
 
-        msg =
-        "请求失败: "
+        result =
+        "请求错误: "
         + error;
 
       }
@@ -90,8 +101,8 @@ function sign(body, name) {
         data.includes("明天再来")
       ){
 
-        msg =
-        "今日已签到";
+        result =
+        "今日已经签到";
 
       }
 
@@ -101,23 +112,23 @@ function sign(body, name) {
         data.includes("\"success\":true")
       ){
 
-        msg =
+        result =
         "签到成功";
 
       }
 
       else {
 
-        msg =
+        result =
         data
         .replace(/\s+/g," ")
-        .slice(0,80);
+        .substring(0,100);
 
       }
 
 
       resolve(
-        name + ": " + msg
+        title + ": " + result
       );
 
 
@@ -134,30 +145,57 @@ function sign(body, name) {
 (async()=>{
 
 
-  let normal =
-  await sign(
-    "[false]",
-    "普通签到"
-  );
+let result=[];
 
 
-  let gamble =
-  await sign(
-    "[true]",
-    "赌狗签到"
-  );
+
+if(
+mode==="普通签到"
+||
+mode==="全部签到"
+){
+
+ result.push(
+   await doCheck(
+     "[false]",
+     "普通签到"
+   )
+ );
+
+}
 
 
-  $notification.post(
-    "HDHive签到完成",
-    "",
-    normal +
-    "\n" +
-    gamble
-  );
+
+if(
+mode==="赌狗签到"
+||
+mode==="全部签到"
+){
+
+ result.push(
+   await doCheck(
+     "[true]",
+     "赌狗签到"
+   )
+ );
+
+}
 
 
-  $done();
+
+$notification.post(
+
+"HDHive签到完成",
+
+mode,
+
+result.join("\n")
+
+);
+
+
+
+$done();
 
 
 })();
