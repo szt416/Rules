@@ -4,36 +4,23 @@ author: "Szt416"
 
 icon: "checkmark.circle.fill"
 
-compat_arguments:
+env_schema:
   HDHIVE_COOKIE:
     name: "HDHive Cookie"
     description: "填写HDHive登录后的完整Cookie"
     default_value: ""
 
-compat_arguments_desc: |
-  HDHIVE_COOKIE:
-  请填写浏览器抓取的完整Cookie
-
-  示例：
-  hdh_sa_token=xxx;
-  csrf_access_token=xxx;
-  hdh_uid=xxx;
-  refresh_token=xxx;
-  token=xxx;
-
-
 scriptings:
   - http_request:
-      name: "HDHive 自动签到"
+      name: "HDHive签到"
       match: "^https://hdhive\\.com/$"
-      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js
+      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive_Signin.js
       timeout: 20
 
-
-cron:
-  - cron: "0 8 * * *"
-    script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js
-
+  - cron:
+      name: "HDHive每日签到"
+      cron: "0 8 * * *"
+      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive_Signin.js
 
 mitm:
   hostnames:
