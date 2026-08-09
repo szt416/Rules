@@ -25,7 +25,7 @@ scriptings:
   - http_request:
       name: "HDHive签到"
       match: "^https://hdhive\\.com/$"
-      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Module/HDHive_Signin.yaml
+      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js
       timeout: 20
 
 
