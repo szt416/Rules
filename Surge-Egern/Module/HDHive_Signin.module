@@ -1,27 +1,32 @@
 name: "HDHive 自动签到"
-description: "HDHive 每日签到 + 赌狗签到"
+description: "HDHive 每日签到和赌狗签到"
 author: "Szt416"
 
 icon: "checkmark.circle.fill"
 
+
 env_schema:
+
   HDHIVE_COOKIE:
     name: "HDHive Cookie"
-    description: "填写HDHive登录后的完整Cookie"
+    description: "填写 HDHive 登录后的完整 Cookie"
     default_value: ""
 
+
+  SIGN_MODE:
+    name: "签到模式"
+    description: "选择签到方式"
+    default_value: "全部签到"
+    options:
+      - "普通签到"
+      - "赌狗签到"
+      - "全部签到"
+
+
 scriptings:
-  - http_request:
-      name: "HDHive签到"
-      match: "^https://hdhive\\.com/$"
-      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive_Signin.js
-      timeout: 20
 
   - cron:
-      name: "HDHive每日签到"
+      name: "HDHive签到"
       cron: "0 8 * * *"
-      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive_Signin.js
-
-mitm:
-  hostnames:
-    - hdhive.com
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Module/HDHive_Signin.yaml"
+      timeout: 30
