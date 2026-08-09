@@ -1,7 +1,7 @@
 name: "源论坛签到"
 description: "ycoo.net 自动签到：首次开启 Cookie 捕获并访问源签到页面保存登录信息，之后每天定时自动签到。"
 author: "Szt416"
-icon: ""
+icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/YCOO.png"
 
 compat_arguments:
   MINUTE: "05"
