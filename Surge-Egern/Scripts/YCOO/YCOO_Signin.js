@@ -7,7 +7,7 @@
 
 使用方法:
 1. 在模块设置中打开「Cookie 捕获」
-2. 使用 Safari 登录 ycoo.net，并访问「源签到」页面
+2. 使用 Safari 登录 ycoo.net，并访问「每日签到」页面
    https://ycoo.net/k_misign-sign.html
 3. 收到“Cookie 成功”通知后，关闭「Cookie 捕获」
 4. 之后由模块按设定时间自动签到
