@@ -10,15 +10,13 @@
  */
 
 
-const env = $environment || {};
-
+const args = $arguments || {};
 
 const cookie =
-env.HDHIVE_COOKIE || "";
-
+args.HDHIVE_COOKIE || "";
 
 const mode =
-env.SIGN_MODE || "全部签到";
+args.SIGN_MODE || "全部签到";
 
 
 const ACTION_ID =
