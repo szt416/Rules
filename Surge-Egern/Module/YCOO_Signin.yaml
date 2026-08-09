@@ -1,11 +1,11 @@
-name: "源论坛 YCOO 签到"
+name: "源论坛签到"
 description: "ycoo.net 自动签到：首次开启 Cookie 捕获并访问源签到页面保存登录信息，之后每天定时自动签到。"
 author: "Szt416"
 icon: ""
 
 compat_arguments:
   MINUTE: "05"
-  HOUR: "09"
+  HOUR: "00"
   ENABLE_CAPTURE: "false"
 
 compat_arguments_desc: |
