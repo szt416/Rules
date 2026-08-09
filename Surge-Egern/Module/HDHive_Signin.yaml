@@ -26,13 +26,13 @@ scriptings:
   - http_request:
       name: "HDHive 自动签到"
       match: "^https://hdhive\\.com/$"
-      script_url: https://raw.githubusercontent.com/Szt416/Rules/main/Surge-Egern/Scripts/HDHive_Signin.js
+      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js
       timeout: 20
 
 
 cron:
   - cron: "0 8 * * *"
-    script_url: https://raw.githubusercontent.com/Szt416/Rules/main/Surge-Egern/Scripts/HDHive_Signin.js
+    script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js
 
 
 mitm:
