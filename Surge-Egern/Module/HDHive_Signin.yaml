@@ -1,0 +1,33 @@
+name: "HDHive 自动签到"
+
+description: "HDHive每日签到"
+
+author: "Szt416"
+
+env_schema:
+
+  HDHIVE_COOKIE:
+
+    name: "HDHive Cookie"
+
+    description: "填写HDHive Cookie"
+
+    default_value: ""
+
+scriptings:
+
+  - http_request:
+
+      name: "HDHive测试"
+
+      match: "^https://hdhive\\.com/$"
+
+      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Module/HDHive_Signin.yaml
+
+      timeout: 20
+
+mitm:
+
+  hostnames:
+
+    - hdhive.com
