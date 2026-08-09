@@ -2,6 +2,7 @@
 脚本名称: 源论坛 YCOO 自动签到
 平台: Egern
 功能: Cookie/请求头捕获 + k_misign 每日签到
+版本: v2.2（首次签到兼容，不依赖“补签”按钮）
 站点: https://ycoo.net/
 
 使用方法:
@@ -14,6 +15,7 @@
 
 const SCRIPT_NAME = "源论坛签到";
 const STORE_KEY = "ycoo_signin_session_v1";
+const SCRIPT_VERSION = "2.2";
 const DEFAULT_BASE = "https://ycoo.net";
 
 const CAPTURE_HEADER_KEYS = [
@@ -114,9 +116,41 @@ function extractFormhash(html) {
   return "";
 }
 
-function isAlreadySigned(html) {
+function isUnsignedPage(html) {
   const t = textOnly(html);
-  return /今日已签|今天已经签到|您今天已经签到|您今日已经签到|今日已经签到|今日已签到/.test(t);
+  return /您今天还没有签到|今天还没有签到|今日还没有签到|尚未签到/.test(t);
+}
+
+function looksLikeSignPage(html) {
+  const raw = String(html || "");
+  const t = textOnly(raw);
+  return /k_misign/i.test(raw) || (
+    /每日签到|源签到/.test(t) &&
+    /连续签到/.test(t) &&
+    /总天数/.test(t)
+  );
+}
+
+function hasExplicitSignedMarker(html) {
+  const t = textOnly(html);
+  return /今日已签|今天已经签到|您今天已经签到|您今日已经签到|今日已经签到|已签到/.test(t);
+}
+
+function hasMakeupMarker(html) {
+  // “补签”只说明页面提供补签能力/存在漏签记录，不能单独证明今天已签到。
+  return /补签/.test(textOnly(html));
+}
+
+function isAlreadySigned(html) {
+  // 核心规则：
+  // 1) 明确出现“今天还没有签到” => 未签到；
+  // 2) 明确出现“已签到”类文案 => 已签到；
+  // 3) 对已登录且结构正常的签到页，只要“未签到”提示消失，也按已签到处理。
+  //    这样第一次签到、没有“补签”按钮的新用户也能正确识别。
+  if (isUnsignedPage(html)) return false;
+  if (hasExplicitSignedMarker(html)) return true;
+  if (looksLoggedOut(html)) return false;
+  return looksLikeSignPage(html);
 }
 
 function looksLoggedOut(html) {
@@ -149,12 +183,18 @@ function extractStats(html) {
 }
 
 function parseSignResult(html) {
+  // Discuz AJAX 结果有时位于 <script> 内；textOnly() 会移除 script，
+  // 因此这里同时检查原始响应，避免 HTTP 200 + 实际成功却被误判。
+  const raw = htmlDecode(String(html || ""));
   const t = textOnly(html);
-  if (/签到成功|恭喜.*签到|签到完成/.test(t)) return { ok: true, duplicate: false, msg: t };
-  if (/今日已签|今天已经签到|您今天已经签到|您今日已经签到|今日已签到|已经签到过/.test(t)) return { ok: true, duplicate: true, msg: t };
-  if (/请先登录|尚未登录|未登录/.test(t)) return { ok: false, auth: true, msg: t };
-  if (/非法字符|formhash.*(错误|失效)|请求来路不正确/.test(t)) return { ok: false, token: true, msg: t };
-  return { ok: false, msg: t };
+  const probe = `${raw} ${t}`;
+  const msg = t || raw.replace(/\s+/g, " ").trim();
+
+  if (/签到成功|恭喜.*签到|签到完成/.test(probe)) return { ok: true, duplicate: false, msg };
+  if (/今日已签|今天已经签到|您今天已经签到|您今日已经签到|今日已签到|已经签到过/.test(probe)) return { ok: true, duplicate: true, msg };
+  if (/请先登录|尚未登录|未登录/.test(probe)) return { ok: false, auth: true, msg };
+  if (/非法字符|formhash.*(错误|失效)|请求来路不正确/.test(probe)) return { ok: false, token: true, msg };
+  return { ok: false, msg };
 }
 
 async function fetchText(ctx, method, url, headers, body) {
@@ -215,11 +255,15 @@ async function getSignPage(ctx, session) {
 
 async function signPrimary(ctx, session, formhash) {
   const base = session.base || DEFAULT_BASE;
-  const url = `${base}/plugin.php?id=k_misign%3Asign&operation=qiandao&inajax=1&ajaxtarget=JD_sign&formhash=${encodeURIComponent(formhash)}`;
+  // ycoo 专用 HAR 中实际使用的签到请求：format=empty，ajaxtarget 为空。
+  const url = `${base}/plugin.php?id=k_misign%3Asign&operation=qiandao&formhash=${encodeURIComponent(formhash)}&format=empty&inajax=1&ajaxtarget=`;
   const headers = buildHeaders(session.headers, {
     Accept: "*/*",
     Referer: `${base}/k_misign-sign.html`,
-    "X-Requested-With": "XMLHttpRequest"
+    "X-Requested-With": "XMLHttpRequest",
+    "Sec-Fetch-Site": "same-origin",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Dest": "empty"
   });
   return await fetchText(ctx, "GET", url, headers);
 }
@@ -250,8 +294,24 @@ async function signMobilePost(ctx, session, formhash) {
 
 async function verifySigned(ctx, session) {
   const check = await getSignPage(ctx, session);
+  const httpOK = check.status >= 200 && check.status < 400;
+  const loggedOut = looksLoggedOut(check.text);
+  const validPage = looksLikeSignPage(check.text);
+  const unsigned = isUnsignedPage(check.text);
+  const explicitSigned = hasExplicitSignedMarker(check.text);
+  const makeup = hasMakeupMarker(check.text);
+
+  // “补签”不参与核心成功判定，仅保留用于日志辅助。
+  // 真正的成功判据是：HTTP 正常 + 仍处于登录状态 + 签到页结构正常 + “今天还没有签到”提示消失。
+  const signed = httpOK && !loggedOut && validPage && !unsigned;
+
   return {
-    signed: check.status >= 200 && check.status < 400 && isAlreadySigned(check.text),
+    signed,
+    unsigned,
+    explicitSigned,
+    makeup,
+    loggedOut,
+    validPage,
     stats: extractStats(check.text),
     text: check.text,
     status: check.status
@@ -259,7 +319,7 @@ async function verifySigned(ctx, session) {
 }
 
 async function doCheckIn(ctx) {
-  log("开始执行签到任务");
+  log(`开始执行签到任务 v${SCRIPT_VERSION}`);
   const session = await loadSession(ctx);
   if (!session) {
     notify("缺少 Cookie", "请打开「Cookie 捕获」，登录 ycoo.net 后访问源签到页面");
@@ -290,48 +350,47 @@ async function doCheckIn(ctx) {
 
     log(`已获取 formhash: ${formhash}`);
 
-    // 方式 1：源论坛历史 HAR 模板使用的标准 k_misign 接口
-    let result = await signPrimary(ctx, session, formhash);
-    let parsed = parseSignResult(result.text);
-    log(`主接口 HTTP ${result.status}: ${parsed.msg.slice(0, 180)}`);
+    // 只发送 ycoo 专用 HAR 已验证过的真实签到请求。
+    // format=empty 的响应可能没有可读“成功”文本，所以 HTTP 200 后必须重新读取签到页验证。
+    const result = await signPrimary(ctx, session, formhash);
+    const parsed = parseSignResult(result.text);
+    log(`签到接口 HTTP ${result.status}: ${(parsed.msg || "<empty>").slice(0, 180)}`);
 
     if (parsed.auth) {
       notify("Cookie 失效", "服务器要求重新登录，请重新捕获 Cookie");
       return;
     }
 
-    let verified = await verifySigned(ctx, session);
-    if (parsed.ok || verified.signed) {
-      notify(parsed.duplicate ? "今日已签" : "签到成功", verified.stats || (parsed.duplicate ? "今天已经完成签到" : "源论坛签到完成"));
+    const verified = await verifySigned(ctx, session);
+    log(`签到页复核 HTTP ${verified.status}: ${verified.signed ? "已签到" : (verified.unsigned ? "未签到" : "状态未知")} | 明确已签=${verified.explicitSigned ? "是" : "否"} | 补签=${verified.makeup ? "有" : "无"}`);
+
+    if (verified.signed) {
+      notify("签到成功", verified.stats || "今日签到已完成");
       return;
     }
 
-    // 方式 2：k_misign 常见伪静态签到接口
-    log("主接口未确认成功，尝试兼容接口");
-    result = await signFallback(ctx, session, formhash);
-    parsed = parseSignResult(result.text);
-    log(`兼容接口 HTTP ${result.status}: ${parsed.msg.slice(0, 180)}`);
-
-    verified = await verifySigned(ctx, session);
-    if (parsed.ok || verified.signed) {
-      notify(parsed.duplicate ? "今日已签" : "签到成功", verified.stats || "源论坛签到完成");
+    // 有些 Discuz AJAX 响应直接给出成功提示；作为辅助判据保留。
+    if (parsed.ok) {
+      notify(parsed.duplicate ? "今日已签" : "签到成功", parsed.duplicate ? "今天已经完成签到" : "源论坛签到完成");
       return;
     }
 
-    // 方式 3：当前站点移动端页面可见的 POST 形式，作为最后兜底
-    log("兼容接口仍未确认成功，尝试移动端 POST 接口");
-    result = await signMobilePost(ctx, session, formhash);
-    parsed = parseSignResult(result.text);
-    log(`移动端接口 HTTP ${result.status}: ${parsed.msg.slice(0, 180)}`);
-
-    verified = await verifySigned(ctx, session);
-    if (parsed.ok || verified.signed) {
-      notify(parsed.duplicate ? "今日已签" : "签到成功", verified.stats || "源论坛签到完成");
+    if (verified.status === 401 || verified.status === 403 || looksLoggedOut(verified.text)) {
+      notify("Cookie 失效", "签到后复核时已退出登录，请重新捕获 Cookie");
       return;
     }
 
-    const msg = parsed.msg ? parsed.msg.slice(0, 120) : `HTTP ${result.status}`;
-    notify("签到失败", msg || "服务器未返回可识别的签到结果");
+    if (verified.unsigned) {
+      notify("签到失败", `签到请求 HTTP ${result.status}，但复核页面仍显示“您今天还没有签到”`);
+      return;
+    }
+
+    if (!verified.validPage) {
+      notify("状态未知", `签到请求 HTTP ${result.status}，但复核页面结构异常，暂不判定成功`);
+      return;
+    }
+
+    notify("状态未知", `签到请求 HTTP ${result.status}，复核页无法可靠确认签到状态`);
   } catch (e) {
     const msg = e && e.message ? e.message : String(e);
     log(msg);
