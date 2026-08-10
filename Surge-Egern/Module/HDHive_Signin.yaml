@@ -1,20 +1,20 @@
-name: "影巢自动签到"
-description: "自动捕获Cookie，并执行普通签到或赌狗签到"
+name: "HDHive 自动签到"
+description: "自动捕获 HDHive Cookie 与 Server Action 参数，并执行每日签到"
 author: "Szt416"
-icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/HDHive.png"
+icon: "checkmark.circle.fill"
 
 compat_arguments:
   SIGN_TIME: "10 0 * * *"
 
 compat_arguments_desc: |
   SIGN_TIME:
-    HDHive 每日签到执行时间，使用 Cron 表达式。
-    默认：每天 00:10
+    每日自动签到时间，使用 Cron 表达式。
+    默认：每天 00:10 执行。
 
 env_schema:
   ENABLE_CAPTURE:
     name: "Cookie 捕获"
-    description: "首次使用时开启，登录影巢后访问首页；收到 Cookie 获取成功通知后关闭。"
+    description: "首次使用或提示安全验证更新时开启。登录 HDHive 后访问首页，并手动点击一次当前选择的签到方式；收到『参数捕获完成』通知后关闭。"
     default_value: "false"
     options:
       - "false"
@@ -22,7 +22,7 @@ env_schema:
 
   SIGN_MODE:
     name: "签到模式"
-    description: "普通签到为固定签到；赌狗签到为随机签到。每天请选择其中一种。"
+    description: "普通签到与赌狗签到每天只能二选一。"
     default_value: "普通签到"
     options:
       - "普通签到"
@@ -30,7 +30,7 @@ env_schema:
 
 scriptings:
   - http_request:
-      name: "HDHive Cookie 捕获"
+      name: "HDHive 参数捕获"
       match: "^https://hdhive\\.com/"
       script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Cookie.js"
       timeout: 10
