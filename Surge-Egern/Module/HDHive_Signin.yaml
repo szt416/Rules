@@ -4,28 +4,28 @@ author: "Szt416"
 
 icon: "checkmark.circle.fill"
 
-
 env_schema:
-
   HDHIVE_COOKIE:
     name: "HDHive Cookie"
     description: "HDHive完整Cookie"
     default_value: ""
 
-
   SIGN_MODE:
     name: "签到模式"
+    description: "选择签到方式"
     default_value: "全部签到"
     options:
       - "普通签到"
       - "赌狗签到"
       - "全部签到"
 
-
 scriptings:
-
-  - cron:
+  - http_request:
       name: "HDHive签到"
-      cron: "0 8 * * *"
-      script_url: ./HDHive_Signin.js
-      timeout: 30
+      match: "^https://hdhive\\.com/$"
+      script_url: "HDHive_Signin.js"
+      timeout: 20
+
+mitm:
+  hostnames:
+    - "hdhive.com"
