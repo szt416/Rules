@@ -1,26 +1,27 @@
 name: "HDHive 自动签到"
-description: "HDHive 自动签到，支持自动获取 Cookie"
+description: "HDHive 自动签到，支持首次自动获取 Cookie"
 author: "Szt416"
 
 icon: "checkmark.circle.fill"
 
 
-compat_arguments:
+env_schema:
 
   COOKIE_GET:
-    default: false
+    name: "Cookie 获取"
+    description: "首次使用开启，登录 HDHive 后访问首页，获取成功后关闭"
+    default_value: false
+    type: boolean
 
 
-compat_arguments_desc: |
-
-  COOKIE_GET:
-    是否开启 Cookie 自动获取
-
-    开启：
-    第一次登录 HDHive 时自动保存 Cookie
-
-    关闭：
-    使用已保存 Cookie 执行签到
+  SIGN_MODE:
+    name: "签到模式"
+    description: "选择签到方式"
+    default_value: "全部签到"
+    options:
+      - "普通签到"
+      - "赌狗签到"
+      - "全部签到"
 
 
 
@@ -41,7 +42,7 @@ scriptings:
 
   - schedule:
 
-      name: "HDHive每日签到"
+      name: "HDHive签到"
 
       cron: "0 10 * * *"
 
