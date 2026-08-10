@@ -1,15 +1,3 @@
-$notification.post(
-  "Egern变量测试",
-  "变量",
-  JSON.stringify({
-    argument: typeof $argument,
-    environment: typeof $environment,
-    variables: typeof $variables,
-    config: typeof $config
-  })
-);
-
-$done();
 /**
  * HDHive 自动签到
  * Egern 专用
@@ -23,9 +11,9 @@ $done();
 // 读取 Egern 模块参数
 // =====================
 
-const cookie = $environment.HDHIVE_COOKIE;
+const cookie = $environment.cookie || "";
 
-const mode = $environment.SIGN_MODE;
+const mode = $environment.mode || "全部签到";
 
 // HDHive Server Action
 const ACTION_ID =
