@@ -24,8 +24,8 @@ env_schema:
 
 scriptings:
 
-  - http_request:
+  - cron:
       name: "HDHive签到"
-      match: "^https://hdhive\\.com/$"
-      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js
-      timeout: 20
+      cron: "0 8 * * *"
+      script_url: ./HDHive_Signin.js
+      timeout: 30
