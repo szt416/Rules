@@ -1,22 +1,15 @@
 /**
  * HDHive 自动签到
- * Egern 专用
- *
- * 普通签到:
- * [false]
- *
- * 赌狗签到:
- * [true]
+ * Egern
  */
 
 
-const args = $arguments || {};
-
 const cookie =
-args.HDHIVE_COOKIE || "";
+$persistentStore.read("HDHIVE_COOKIE") || "";
+
 
 const mode =
-args.SIGN_MODE || "全部签到";
+$persistentStore.read("HDHIVE_MODE") || "全部签到";
 
 
 const ACTION_ID =
@@ -29,7 +22,7 @@ if (!cookie) {
   $notification.post(
     "HDHive签到",
     "失败",
-    "未配置 Cookie"
+    "未保存 Cookie"
   );
 
   $done();
@@ -38,161 +31,135 @@ if (!cookie) {
 
 
 
-function checkin(body, name) {
+function checkin(body,name){
+
+return new Promise(resolve=>{
 
 
-  return new Promise((resolve)=>{
+$httpClient.post({
+
+url:"https://hdhive.com/",
+
+headers:{
+
+"Accept":"text/x-component",
+
+"Content-Type":
+"text/plain;charset=UTF-8",
+
+"Origin":
+"https://hdhive.com",
+
+"Referer":
+"https://hdhive.com/",
+
+"next-action":
+ACTION_ID,
+
+"Cookie":
+cookie
+
+},
+
+body:body
 
 
-    $httpClient.post(
-
-      {
-        url: "https://hdhive.com/",
-
-        headers: {
-
-          "Accept":
-          "text/x-component",
-
-          "Content-Type":
-          "text/plain;charset=UTF-8",
-
-          "Origin":
-          "https://hdhive.com",
-
-          "Referer":
-          "https://hdhive.com/",
-
-          "next-action":
-          ACTION_ID,
-
-          "Cookie":
-          cookie
-
-        },
-
-        body: body
-
-      },
+},(err,resp,data)=>{
 
 
-      function(error, response, data){
+let msg="";
 
 
-        let msg = "";
+if(err){
+
+msg="请求错误："+err;
+
+}
+
+else if(data.includes("明天再来")){
+
+msg="今日已签到";
+
+}
+
+else if(
+data.includes("成功") ||
+data.includes("success")
+){
+
+msg="签到成功";
+
+}
+
+else{
+
+msg=data.substring(0,80);
+
+}
 
 
-        if(error){
-
-          msg =
-          "请求错误: "
-          + error;
-
-        }
+resolve(
+name+"："+msg
+);
 
 
-        else if(
-          data.includes("明天再来")
-        ){
-
-          msg =
-          "今日已签到";
-
-        }
+});
 
 
-        else if(
-          data.includes("签到成功")
-          ||
-          data.includes("\"success\":true")
-        ){
-
-          msg =
-          "签到成功";
-
-        }
-
-
-        else{
-
-          msg =
-          data
-          .replace(/\s+/g," ")
-          .substring(0,100);
-
-        }
-
-
-        resolve(
-          name + ": " + msg
-        );
-
-
-      }
-
-
-    );
-
-
-  });
+});
 
 
 }
+
 
 
 
 (async()=>{
 
 
-  let result = [];
+let result=[];
 
 
-  if(
-    mode === "普通签到"
-    ||
-    mode === "全部签到"
-  ){
+if(
+mode=="普通签到" ||
+mode=="全部签到"
+){
 
-    result.push(
-      await checkin(
-        "[false]",
-        "普通签到"
-      )
-    );
+result.push(
+await checkin(
+"[false]",
+"普通签到"
+)
+);
 
-  }
-
-
-
-  if(
-    mode === "赌狗签到"
-    ||
-    mode === "全部签到"
-  ){
-
-    result.push(
-      await checkin(
-        "[true]",
-        "赌狗签到"
-      )
-    );
-
-  }
+}
 
 
 
-  $notification.post(
+if(
+mode=="赌狗签到" ||
+mode=="全部签到"
+){
 
-    "HDHive签到完成",
+result.push(
+await checkin(
+"[true]",
+"赌狗签到"
+)
+);
 
-    mode,
-
-    result.join("\n")
-
-  );
+}
 
 
-  $done();
+
+$notification.post(
+"HDHive签到完成",
+mode,
+result.join("\n")
+);
+
+
+$done();
 
 
 })();
