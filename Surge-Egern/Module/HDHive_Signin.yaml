@@ -5,6 +5,14 @@ author: "Szt416"
 icon: "checkmark.circle.fill"
 
 
+env_schema:
+
+  AUTO_COOKIE:
+    name: "自动获取Cookie"
+    description: "首次使用开启，获取成功后关闭"
+    default_value: true
+
+
 scriptings:
 
   - http_request:
@@ -22,5 +30,7 @@ scriptings:
 
 
 mitm:
+
   hostnames:
+
     - "hdhive.com"
