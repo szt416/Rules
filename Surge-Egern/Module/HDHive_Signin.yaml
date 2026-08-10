@@ -1,7 +1,7 @@
 name: "HDHive 自动签到"
 description: "自动捕获 HDHive Cookie 与 Server Action 参数，并执行每日签到"
 author: "Szt416"
-icon: "checkmark.circle.fill"
+icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/HDHive.png"
 
 compat_arguments:
   SIGN_TIME: "10 0 * * *"
