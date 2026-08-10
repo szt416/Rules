@@ -4,12 +4,12 @@ author: "Szt416"
 icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/HDHive.png"
 
 compat_arguments:
-  SIGN_TIME: "0 10 * * *"
+  SIGN_TIME: "10 0 * * *"
 
 compat_arguments_desc: |
   SIGN_TIME:
     HDHive 每日签到执行时间，使用 Cron 表达式。
-    默认：每天 10:00
+    默认：每天 00:10
 
 env_schema:
   ENABLE_CAPTURE:
