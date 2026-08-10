@@ -11,11 +11,9 @@
 // 读取 Egern 模块参数
 // =====================
 
-const cookie =
-  $argument.HDHIVE_COOKIE || "";
+const cookie = $config.HDHIVE_COOKIE || "";
 
-const mode =
-  $argument.SIGN_MODE || "全部签到";
+const mode = $config.SIGN_MODE || "全部签到";
 
 
 // HDHive Server Action
