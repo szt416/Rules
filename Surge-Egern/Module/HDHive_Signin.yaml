@@ -1,32 +1,54 @@
 name: "HDHive 自动签到"
-description: "HDHive 自动获取Cookie并执行普通签到和赌狗签到"
+description: "HDHive 自动签到，支持自动获取 Cookie"
 author: "Szt416"
 
 icon: "checkmark.circle.fill"
 
 
-env_schema:
+compat_arguments:
 
-  AUTO_COOKIE:
-    name: "自动获取Cookie"
-    description: "首次使用开启，获取成功后关闭"
-    default_value: true
+  COOKIE_GET:
+    default: false
+
+
+compat_arguments_desc: |
+
+  COOKIE_GET:
+    是否开启 Cookie 自动获取
+
+    开启：
+    第一次登录 HDHive 时自动保存 Cookie
+
+    关闭：
+    使用已保存 Cookie 执行签到
+
 
 
 scriptings:
 
+
   - http_request:
+
       name: "HDHive Cookie获取"
+
       match: "^https://hdhive\\.com/"
+
       script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Cookie.js"
+
       timeout: 10
 
 
+
   - schedule:
+
       name: "HDHive每日签到"
+
       cron: "0 10 * * *"
+
       script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js"
+
       timeout: 30
+
 
 
 mitm:
