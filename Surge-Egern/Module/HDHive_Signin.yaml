@@ -7,13 +7,13 @@ icon: "checkmark.circle.fill"
 
 env_schema:
 
-  HDHIVE_COOKIE:
+  cookie:
     name: "HDHive Cookie"
     description: "HDHive完整Cookie"
     default_value: ""
 
 
-  SIGN_MODE:
+  mode:
     name: "签到模式"
     default_value: "全部签到"
     options:
