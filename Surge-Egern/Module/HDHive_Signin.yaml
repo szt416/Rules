@@ -1,5 +1,5 @@
-name: "HDHive 自动签到"
-description: "自动捕获 HDHive Cookie，并执行普通签到或赌狗签到"
+name: "影巢自动签到"
+description: "自动捕获Cookie，并执行普通签到或赌狗签到"
 author: "Szt416"
 icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/HDHive.png"
 
@@ -14,7 +14,7 @@ compat_arguments_desc: |
 env_schema:
   ENABLE_CAPTURE:
     name: "Cookie 捕获"
-    description: "首次使用时开启，登录 HDHive 后访问首页；收到 Cookie 获取成功通知后关闭。"
+    description: "首次使用时开启，登录影巢后访问首页；收到 Cookie 获取成功通知后关闭。"
     default_value: "false"
     options:
       - "false"
