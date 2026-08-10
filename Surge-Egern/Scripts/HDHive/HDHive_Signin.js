@@ -1,22 +1,13 @@
-/**
- * HDHive 自动签到
- */
+const cookie = $persistentStore.read("HDHive_Cookie");
 
 
-const cookie =
-$persistentStore.read("HDHive_Cookie");
-
-
-
-if(!cookie){
-
+if (!cookie) {
 
     $notification.post(
         "HDHive签到",
         "失败",
-        "未获取Cookie"
+        "没有Cookie"
     );
-
 
     $done();
 
@@ -24,104 +15,77 @@ if(!cookie){
 
 
 
-const nextAction =
-"40d45889e4bba859ac67c63e5e8b5f78511979a439";
-
-
-
-
-function signin(body,name){
-
+function signin(body, name) {
 
 
     $httpClient.post(
+        {
+            url: "https://hdhive.com/",
+            
+            headers: {
 
-    {
+                "Cookie": cookie,
 
-        url:"https://hdhive.com/",
+                "User-Agent":
+                "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15",
 
+                "Accept":
+                "text/x-component",
 
-        headers:{
+                "Content-Type":
+                "text/plain;charset=UTF-8",
 
+                "Origin":
+                "https://hdhive.com",
 
-            "Cookie":cookie,
+                "Referer":
+                "https://hdhive.com/",
 
+                "next-action":
+                "40d45889e4bba859ac67c63e5e8b5f78511979a439"
 
-            "Accept":"text/x-component",
-
-
-            "Content-Type":
-            "text/plain;charset=UTF-8",
-
-
-            "Origin":
-            "https://hdhive.com",
-
-
-            "Referer":
-            "https://hdhive.com/",
+            },
 
 
-            "next-action":
-            nextAction
-
+            body: body
 
         },
 
 
-        body:body
+        function(error, response, data) {
 
 
-    },
+            if(error){
 
+                $notification.post(
+                    "HDHive签到",
+                    name,
+                    "请求失败\n" + error
+                );
 
-    function(error,response,data){
+                return;
 
-
-
-        if(error){
+            }
 
 
             $notification.post(
                 "HDHive签到",
                 name,
-                "请求失败\n"+error
+                "HTTP:" + response.status
+                +
+                "\n"
+                +
+                data.slice(0,80)
             );
 
 
-            return;
-
         }
-
-
-
-        $notification.post(
-
-            "HDHive签到",
-
-            name,
-
-            "HTTP:"
-            +
-            response.status
-            +
-            "\n"
-            +
-            data.substring(0,100)
-
-        );
-
-
-
-    });
-
+    );
 
 
 }
 
 
-
-// 普通签到
 
 signin(
 "[true]",
@@ -129,8 +93,6 @@ signin(
 );
 
 
-
-// 赌狗签到
 
 signin(
 "[false]",
