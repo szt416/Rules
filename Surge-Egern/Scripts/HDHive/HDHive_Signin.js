@@ -1,104 +1,52 @@
-const cookie = $persistentStore.read("HDHive_Cookie");
+/**
+ * HDHive Cookie 捕获
+ * Egern 原生脚本
+ *
+ * ENABLE_CAPTURE = true  时捕获
+ * ENABLE_CAPTURE = false 时完全跳过
+ */
 
+export default async function (ctx) {
+  const enabled =
+    String(ctx.env.ENABLE_CAPTURE || "false") === "true";
 
-if (!cookie) {
+  // 捕获关闭时，同时复位通知状态
+  if (!enabled) {
+    ctx.storage.set("HDHive_Capture_Notified", "0");
+    return;
+  }
 
-    $notification.post(
-        "HDHive签到",
-        "失败",
-        "没有Cookie"
-    );
+  if (!ctx.request) {
+    return;
+  }
 
-    $done();
+  const cookie = ctx.request.headers.get("cookie") || "";
 
+  // 必须至少包含 HDHive 登录所需的主要字段
+  if (
+    !cookie.includes("token=") ||
+    !cookie.includes("refresh_token=") ||
+    !cookie.includes("hdh_uid=")
+  ) {
+    return;
+  }
+
+  // 保存完整 Cookie
+  ctx.storage.set("HDHive_Cookie", cookie);
+
+  // 避免打开一次网页连续弹几十条通知
+  const notified =
+    ctx.storage.get("HDHive_Capture_Notified") || "0";
+
+  if (notified !== "1") {
+    ctx.storage.set("HDHive_Capture_Notified", "1");
+
+    ctx.notify({
+      title: "HDHive",
+      subtitle: "Cookie 获取成功",
+      body:
+        `Cookie 长度：${cookie.length}\n` +
+        "请返回模块设置并关闭「Cookie 捕获」。"
+    });
+  }
 }
-
-
-
-function signin(body, name) {
-
-
-    $httpClient.post(
-        {
-            url: "https://hdhive.com/",
-            
-            headers: {
-
-                "Cookie": cookie,
-
-                "User-Agent":
-                "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15",
-
-                "Accept":
-                "text/x-component",
-
-                "Content-Type":
-                "text/plain;charset=UTF-8",
-
-                "Origin":
-                "https://hdhive.com",
-
-                "Referer":
-                "https://hdhive.com/",
-
-                "next-action":
-                "40d45889e4bba859ac67c63e5e8b5f78511979a439"
-
-            },
-
-
-            body: body
-
-        },
-
-
-        function(error, response, data) {
-
-
-            if(error){
-
-                $notification.post(
-                    "HDHive签到",
-                    name,
-                    "请求失败\n" + error
-                );
-
-                return;
-
-            }
-
-
-            $notification.post(
-                "HDHive签到",
-                name,
-                "HTTP:" + response.status
-                +
-                "\n"
-                +
-                data.slice(0,80)
-            );
-
-
-        }
-    );
-
-
-}
-
-
-
-signin(
-"[true]",
-"普通签到"
-);
-
-
-
-signin(
-"[false]",
-"赌狗签到"
-);
-
-
-
-$done();
