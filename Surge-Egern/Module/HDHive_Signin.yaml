@@ -4,28 +4,32 @@ author: "Szt416"
 
 icon: "checkmark.circle.fill"
 
+
 env_schema:
+
   HDHIVE_COOKIE:
     name: "HDHive Cookie"
     description: "HDHive完整Cookie"
     default_value: ""
 
+
   SIGN_MODE:
     name: "签到模式"
-    description: "选择签到方式"
     default_value: "全部签到"
     options:
       - "普通签到"
       - "赌狗签到"
       - "全部签到"
 
+
 scriptings:
-  - http_request:
+
+  - generic:
       name: "HDHive签到"
-      match: "^https://hdhive\\.com/$"
-      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js"
+      script_url: https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Signin.js
       timeout: 20
+
 
 mitm:
   hostnames:
-    - "hdhive.com"
+    - hdhive.com
