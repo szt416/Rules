@@ -1,188 +1,316 @@
 /**
  * HDHive 自动签到
- * Egern 专用
- * 支持：
- *  普通签到
- *  赌狗签到
- *  赌狗失败自动普通签到
+ * Egern http_request 兼容版
+ *
+ * 普通签到：
+ * [false]
+ *
+ * 赌狗签到：
+ * [true]
  */
 
-const cookie = ctx.env.HDHIVE_COOKIE || "";
-const mode = ctx.env.SIGN_MODE || "普通签到";
+
+const cookie = $environment.HDHIVE_COOKIE || "";
+const mode = $environment.SIGN_MODE || "普通签到";
+
 
 const url = "https://hdhive.com/";
 
-function notify(title, body) {
-  $notify(title, "", body);
+
+function notify(msg) {
+  $notify("HDHive签到", "", msg);
 }
+
+
 
 if (!cookie) {
-  notify("HDHive签到", "失败\n未获取 Cookie");
-  throw new Error("Cookie为空");
+
+  notify("失败\n未配置 Cookie");
+
+  $done();
+
 }
 
 
-// 获取签到类型
-async function sign(type) {
 
-  // 普通签到 false
-  // 赌狗签到 true
-  const body = type ? "[true]" : "[false]";
+function requestSign(isGamble) {
 
-  const headers = {
-    "Content-Type": "text/plain;charset=UTF-8",
-    "Accept": "text/x-component",
-    "Origin": "https://hdhive.com",
-    "Referer": "https://hdhive.com/",
-    "Cookie": cookie,
-    "User-Agent":
+
+  return new Promise((resolve) => {
+
+
+    const headers = {
+
+      "Content-Type": "text/plain;charset=UTF-8",
+
+      "Accept": "text/x-component",
+
+      "Origin": "https://hdhive.com",
+
+      "Referer": "https://hdhive.com/",
+
+      "Cookie": cookie,
+
+      "User-Agent":
       "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1",
 
-    // HDHive Next.js Action
-    "next-action":
+
+      "next-action":
       "40d45889e4bba859ac67c63e5e8b5f78511979a439",
 
-    "next-router-state-tree":
+
+      "next-router-state-tree":
       "%5B%22%22%2C%7B%22children%22%3A%5B%22(app)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D"
-  };
+
+    };
 
 
-  try {
 
-    const resp = await $httpClient.post({
-      url,
-      headers,
-      body
+    $httpClient.post({
+
+      url: url,
+
+      headers: headers,
+
+      body: isGamble ? "[true]" : "[false]"
+
+
+    }, function(error, response, body){
+
+
+
+      if(error){
+
+        resolve({
+
+          success:false,
+
+          msg:String(error)
+
+        });
+
+        return;
+
+      }
+
+
+
+      body = body || "";
+
+
+
+      // 已签到
+
+      if(
+
+        body.includes("无需重复签到") ||
+
+        body.includes("已经签到") ||
+
+        body.includes("今日已签到")
+
+      ){
+
+        resolve({
+
+          success:true,
+
+          msg:"今日已经签到"
+
+        });
+
+        return;
+
+      }
+
+
+
+      // 安全验证
+
+      if(
+
+        body.includes("安全验证已更新") ||
+
+        body.includes("请重试")
+
+      ){
+
+        resolve({
+
+          success:false,
+
+          verify:true,
+
+          msg:"安全验证已更新，请重试"
+
+        });
+
+        return;
+
+      }
+
+
+
+      // 成功
+
+      if(
+
+        body.includes("签到成功") ||
+
+        body.includes("签到")
+
+      ){
+
+        resolve({
+
+          success:true,
+
+          msg:"签到成功"
+
+        });
+
+        return;
+
+      }
+
+
+
+      resolve({
+
+        success:false,
+
+        msg:body.substring(0,120)
+
+      });
+
+
+
     });
 
 
-    let result = resp.body || "";
+  });
 
 
-    // 已签到
-    if (
-      result.includes("无需重复签到") ||
-      result.includes("已经签到")
-    ) {
-      return {
-        success: true,
-        msg: "今日已经签到"
-      };
-    }
-
-
-    // 安全验证
-    if (
-      result.includes("安全验证已更新") ||
-      result.includes("请重试")
-    ) {
-      return {
-        success: false,
-        verify: true,
-        msg: "安全验证已更新，请重试"
-      };
-    }
-
-
-    // 成功关键词
-    if (
-      result.includes("成功") ||
-      result.includes("签到")
-    ) {
-      return {
-        success: true,
-        msg: result
-      };
-    }
-
-
-    return {
-      success:false,
-      msg:result.substring(0,100)
-    };
-
-
-  } catch(e){
-
-    return {
-      success:false,
-      msg:String(e)
-    };
-
-  }
 }
+
 
 
 
 (async()=>{
 
 
+
   let result;
 
 
+
   // 赌狗签到
+
   if(mode === "赌狗签到"){
 
-    result = await sign(true);
+
+    result = await requestSign(true);
 
 
-    // 赌狗失败自动普通签到
-    if(!result.success){
 
-      let normal = await sign(false);
+    if(result.success){
 
 
-      if(normal.success){
+      notify(
 
-        notify(
-          "HDHive签到",
-          "赌狗签到失败\n已自动普通签到\n" + normal.msg
-        );
+        "赌狗签到成功\n" +
 
-      }else{
+        result.msg
 
-        notify(
-          "HDHive签到",
-          "赌狗签到失败\n普通签到也失败\n" +
-          normal.msg
-        );
+      );
 
-      }
 
-      return;
+      $done();
+
     }
 
 
-    notify(
-      "HDHive签到",
-      "赌狗签到\n" + result.msg
-    );
 
-    return;
+    // 赌狗失败，尝试普通签到
+
+    let normal = await requestSign(false);
+
+
+
+    if(normal.success){
+
+
+      notify(
+
+        "赌狗签到失败\n已自动普通签到\n" +
+
+        normal.msg
+
+      );
+
+
+    }else{
+
+
+      notify(
+
+        "赌狗签到失败\n普通签到也失败\n" +
+
+        normal.msg
+
+      );
+
+
+    }
+
+
+
+    $done();
+
+
 
   }
+
 
 
 
   // 普通签到
-  result = await sign(false);
+
+
+  result = await requestSign(false);
+
 
 
   if(result.success){
 
+
     notify(
-      "HDHive签到",
-      "普通签到\n" + result.msg
+
+      "普通签到成功\n" +
+
+      result.msg
+
     );
+
 
   }else{
 
+
     notify(
-      "HDHive签到",
-      "普通签到失败\n" + result.msg
+
+      "普通签到失败\n" +
+
+      result.msg
+
     );
 
+
   }
+
+
+
+  $done();
+
 
 
 })();
