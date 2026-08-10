@@ -1,6 +1,12 @@
+/**
+ * HDHive Cookie自动获取
+ */
+
+
 const enable = $environment.AUTO_COOKIE;
 
 
+// 关闭自动获取
 if(enable === "false"){
 
     $done({});
@@ -8,9 +14,11 @@ if(enable === "false"){
 }
 
 
+
 let cookie =
 $request.headers["Cookie"] ||
 $request.headers["cookie"];
+
 
 
 if(cookie && cookie.includes("token=")){
@@ -28,7 +36,9 @@ if(cookie && cookie.includes("token=")){
         "Cookie长度：" + cookie.length
     );
 
+
 }
+
 
 
 $done({});
