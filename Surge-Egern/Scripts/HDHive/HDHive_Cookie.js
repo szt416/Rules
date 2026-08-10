@@ -1,15 +1,20 @@
-let cookie = "";
+const enable = $environment.AUTO_COOKIE;
 
-if ($request.headers["Cookie"]) {
-    cookie = $request.headers["Cookie"];
+
+if(enable === "false"){
+
+    $done({});
+
 }
 
-if ($request.headers["cookie"]) {
-    cookie = $request.headers["cookie"];
-}
+
+let cookie =
+$request.headers["Cookie"] ||
+$request.headers["cookie"];
 
 
-if (cookie && cookie.includes("token=")) {
+if(cookie && cookie.includes("token=")){
+
 
     $persistentStore.write(
         cookie,
