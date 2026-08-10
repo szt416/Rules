@@ -1,192 +1,117 @@
 /**
  * HDHive 自动签到
- * Egern http_request 兼容版
+ * Egern 原生脚本
  *
- * 普通签到：
+ * 普通签到:
  * [false]
  *
- * 赌狗签到：
+ * 赌狗签到:
  * [true]
  */
 
+export default async function (ctx) {
 
-const cookie = $environment.HDHIVE_COOKIE || "";
-const mode = $environment.SIGN_MODE || "普通签到";
 
+  const cookie =
+    ctx.storage.get("HDHive_Cookie") || "";
 
-const url = "https://hdhive.com/";
 
+  const mode =
+    ctx.env.SIGN_MODE || "普通签到";
 
-function notify(msg) {
-  $notify("HDHive签到", "", msg);
-}
 
 
+  if (!cookie) {
 
-if (!cookie) {
+    ctx.notify({
 
-  notify("失败\n未配置 Cookie");
+      title: "HDHive签到",
 
-  $done();
+      subtitle: "失败",
 
-}
+      body:
+        "未找到 Cookie\n" +
+        "请开启 Cookie 捕获后访问 HDHive 首页"
 
+    });
 
+    return;
 
-function requestSign(isGamble) {
+  }
 
 
-  return new Promise((resolve) => {
 
+  const result =
+    await sign(ctx, cookie, mode === "赌狗签到");
 
-    const headers = {
 
-      "Content-Type": "text/plain;charset=UTF-8",
 
-      "Accept": "text/x-component",
+  // 赌狗失败自动普通签到
 
-      "Origin": "https://hdhive.com",
+  if (
 
-      "Referer": "https://hdhive.com/",
+    mode === "赌狗签到" &&
 
-      "Cookie": cookie,
+    !result.success
 
-      "User-Agent":
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1",
+  ) {
 
 
-      "next-action":
-      "40d45889e4bba859ac67c63e5e8b5f78511979a439",
+    const normal =
+      await sign(ctx, cookie, false);
 
 
-      "next-router-state-tree":
-      "%5B%22%22%2C%7B%22children%22%3A%5B%22(app)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D"
 
-    };
+    if(normal.success){
 
 
+      ctx.notify({
 
-    $httpClient.post({
+        title:"HDHive签到",
 
-      url: url,
+        subtitle:"赌狗签到失败",
 
-      headers: headers,
-
-      body: isGamble ? "[true]" : "[false]"
-
-
-    }, function(error, response, body){
-
-
-
-      if(error){
-
-        resolve({
-
-          success:false,
-
-          msg:String(error)
-
-        });
-
-        return;
-
-      }
-
-
-
-      body = body || "";
-
-
-
-      // 已签到
-
-      if(
-
-        body.includes("无需重复签到") ||
-
-        body.includes("已经签到") ||
-
-        body.includes("今日已签到")
-
-      ){
-
-        resolve({
-
-          success:true,
-
-          msg:"今日已经签到"
-
-        });
-
-        return;
-
-      }
-
-
-
-      // 安全验证
-
-      if(
-
-        body.includes("安全验证已更新") ||
-
-        body.includes("请重试")
-
-      ){
-
-        resolve({
-
-          success:false,
-
-          verify:true,
-
-          msg:"安全验证已更新，请重试"
-
-        });
-
-        return;
-
-      }
-
-
-
-      // 成功
-
-      if(
-
-        body.includes("签到成功") ||
-
-        body.includes("签到")
-
-      ){
-
-        resolve({
-
-          success:true,
-
-          msg:"签到成功"
-
-        });
-
-        return;
-
-      }
-
-
-
-      resolve({
-
-        success:false,
-
-        msg:body.substring(0,120)
+        body:
+          "已自动执行普通签到\n\n" +
+          normal.msg
 
       });
 
 
+    }else{
 
-    });
 
+      ctx.notify({
+
+        title:"HDHive签到",
+
+        subtitle:"签到失败",
+
+        body:
+          "赌狗:\n" +
+          result.msg +
+          "\n\n普通:\n" +
+          normal.msg
+
+      });
+
+
+    }
+
+
+    return;
+
+  }
+
+
+
+  ctx.notify({
+
+    title:"HDHive签到",
+
+    subtitle:mode,
+
+    body:result.msg
 
   });
 
@@ -196,121 +121,215 @@ function requestSign(isGamble) {
 
 
 
-(async()=>{
+async function sign(ctx,cookie,gamble){
+
+
+  const headers = {
+
+
+    "Accept":
+      "text/x-component",
+
+
+    "Content-Type":
+      "text/plain;charset=UTF-8",
+
+
+    "Origin":
+      "https://hdhive.com",
+
+
+    "Referer":
+      "https://hdhive.com/",
+
+
+    "next-action":
+      "40d45889e4bba859ac67c63e5e8b5f78511979a439",
+
+
+    "next-router-state-tree":
+      "%5B%22%22%2C%7B%22children%22%3A%5B%22(app)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+
+
+    "Cookie":
+      cookie,
+
+
+    "User-Agent":
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 Version/26.6 Mobile/15E148 Safari/604.1"
+
+  };
 
 
 
-  let result;
+  try{
 
 
+    const response =
+      await ctx.http.post(
 
-  // 赌狗签到
+        "https://hdhive.com/",
 
-  if(mode === "赌狗签到"){
+        {
 
+          headers,
 
-    result = await requestSign(true);
+          body:
+            gamble
+            ? "[true]"
+            : "[false]",
 
+          timeout:20000
 
-
-    if(result.success){
-
-
-      notify(
-
-        "赌狗签到成功\n" +
-
-        result.msg
+        }
 
       );
 
 
-      $done();
 
-    }
-
-
-
-    // 赌狗失败，尝试普通签到
-
-    let normal = await requestSign(false);
+    const text =
+      await response.text();
 
 
 
-    if(normal.success){
-
-
-      notify(
-
-        "赌狗签到失败\n已自动普通签到\n" +
-
-        normal.msg
-
-      );
-
-
-    }else{
-
-
-      notify(
-
-        "赌狗签到失败\n普通签到也失败\n" +
-
-        normal.msg
-
-      );
-
-
-    }
+    return parse(text,response.status);
 
 
 
-    $done();
+  }catch(e){
 
 
+    return {
+
+      success:false,
+
+      msg:
+        "请求异常\n" +
+        String(e)
+
+    };
+
+  }
+
+
+}
+
+
+
+
+
+function parse(text,status){
+
+
+  const data =
+    String(text || "");
+
+
+
+  if(
+
+    data.includes("已经签到") ||
+
+    data.includes("无需重复签到") ||
+
+    data.includes("今日已签到")
+
+  ){
+
+    return {
+
+      success:true,
+
+      msg:
+        "今日已经签到，无需重复签到"
+
+    };
 
   }
 
 
 
 
-  // 普通签到
+  if(
 
+    data.includes("安全验证已更新") ||
 
-  result = await requestSign(false);
+    data.includes("请重试")
 
+  ){
 
+    return {
 
-  if(result.success){
+      success:false,
 
+      msg:
+        "安全验证已更新，请重试"
 
-    notify(
-
-      "普通签到成功\n" +
-
-      result.msg
-
-    );
-
-
-  }else{
-
-
-    notify(
-
-      "普通签到失败\n" +
-
-      result.msg
-
-    );
-
+    };
 
   }
 
 
 
-  $done();
+
+  if(
+
+    data.includes("未登录") ||
+
+    data.includes("Unauthorized") ||
+
+    status===401
+
+  ){
+
+    return {
+
+      success:false,
+
+      msg:
+        "Cookie失效，请重新获取"
+
+    };
+
+  }
 
 
 
-})();
+
+
+  if(
+
+    data.includes("成功")
+
+  ){
+
+    return {
+
+      success:true,
+
+      msg:
+        "签到成功"
+
+    };
+
+  }
+
+
+
+
+  return {
+
+
+    success:false,
+
+
+    msg:
+      `HTTP ${status}\n`+
+      data
+      .replace(/\s+/g," ")
+      .slice(0,150)
+
+  };
+
+
+}
