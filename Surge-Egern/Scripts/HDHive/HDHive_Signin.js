@@ -1,3 +1,15 @@
+$notification.post(
+  "Egern变量测试",
+  "变量",
+  JSON.stringify({
+    argument: typeof $argument,
+    environment: typeof $environment,
+    variables: typeof $variables,
+    config: typeof $config
+  })
+);
+
+$done();
 /**
  * HDHive 自动签到
  * Egern 专用
