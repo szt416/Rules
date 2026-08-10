@@ -1,13 +1,9 @@
-/**
- * HDHive Cookie自动获取
- */
+// HDHive Cookie获取
+
+const enable = ctx.env.COOKIE_GET;
 
 
-const enable = $environment.AUTO_COOKIE;
-
-
-// 关闭自动获取
-if(enable === "false"){
+if (enable !== "true") {
 
     $done({});
 
@@ -35,7 +31,6 @@ if(cookie && cookie.includes("token=")){
         "Cookie获取成功",
         "Cookie长度：" + cookie.length
     );
-
 
 }
 
