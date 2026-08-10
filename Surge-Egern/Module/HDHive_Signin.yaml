@@ -7,16 +7,18 @@ icon: "checkmark.circle.fill"
 
 env_schema:
 
-  COOKIE_GET:
-    name: "Cookie 获取"
-    description: "首次使用开启，登录 HDHive 后访问首页，获取成功后关闭"
-    default_value: false
-    type: boolean
+  ENABLE_CAPTURE:
+    name: "Cookie 捕获"
+    description: "首次使用时开启，登录 HDHive 后访问首页；收到成功通知后关闭。"
+    default_value: "false"
+    options:
+      - "false"
+      - "true"
 
 
   SIGN_MODE:
     name: "签到模式"
-    description: "选择签到方式"
+    description: "选择签到类型"
     default_value: "全部签到"
     options:
       - "普通签到"
@@ -27,7 +29,6 @@ env_schema:
 
 scriptings:
 
-
   - http_request:
 
       name: "HDHive Cookie获取"
@@ -37,7 +38,6 @@ scriptings:
       script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHive/HDHive_Cookie.js"
 
       timeout: 10
-
 
 
   - schedule:
