@@ -422,13 +422,20 @@ function parseResult(
     String(text || "");
 
   /*
-   * 已签到
+   * 为了方便识别 Flight / JSON 字符串，
+   * 同时生成一个简单解码后的文本版本。
+   */
+  const readable =
+    decodeResponseText(data);
+
+  /*
+   * 1. 已签到
    */
   if (
-    data.includes("你已经签到过了") ||
-    data.includes("明天再来") ||
-    data.includes("今日已签到") ||
-    data.includes("无需重复签到")
+    readable.includes("你已经签到过了") ||
+    readable.includes("明天再来") ||
+    readable.includes("今日已签到") ||
+    readable.includes("无需重复签到")
   ) {
     return {
       success: true,
@@ -439,11 +446,11 @@ function parseResult(
   }
 
   /*
-   * 安全参数过期 / 更新
+   * 2. 安全参数过期 / 更新
    */
   if (
-    data.includes("安全验证已更新") ||
-    data.includes("请重试")
+    readable.includes("安全验证已更新") ||
+    readable.includes("请重试")
   ) {
     return {
       success: false,
@@ -454,12 +461,12 @@ function parseResult(
   }
 
   /*
-   * 登录状态失效
+   * 3. 登录状态失效
    */
   if (
-    data.includes("未登录") ||
-    data.includes("登录失效") ||
-    data.includes("Unauthorized") ||
+    readable.includes("未登录") ||
+    readable.includes("登录失效") ||
+    readable.includes("Unauthorized") ||
     status === 401
   ) {
     return {
@@ -480,10 +487,50 @@ function parseResult(
   }
 
   /*
-   * 签到成功
+   * 4. 优先识别：
+   *    签到成功，获得 12 积分
+   */
+  const reward =
+    extractSignReward(
+      readable
+    );
+
+  if (reward !== null) {
+    return {
+      success: true,
+      securityUpdated: false,
+      message:
+        `签到成功，获得 ${reward} 积分 🎉`
+    };
+  }
+
+  /*
+   * 5. 查找真正与签到有关的 message / description
+   *
+   * 不再直接拿第一个 description，
+   * 防止再次抓到「TG 通知广告」。
+   */
+  const signMessage =
+    extractSignMessage(
+      data
+    );
+
+  if (signMessage) {
+    return {
+      success: true,
+      securityUpdated: false,
+      message:
+        signMessage
+    };
+  }
+
+  /*
+   * 6. 明确签到成功
    */
   if (
-    data.includes("签到成功") ||
+    readable.includes("签到成功") ||
+    readable.includes('"success":true') ||
+    readable.includes('"success": true') ||
     data.includes('"success":true') ||
     data.includes('"success": true')
   ) {
@@ -491,16 +538,19 @@ function parseResult(
       success: true,
       securityUpdated: false,
       message:
-        extractMessage(data) ||
-        "签到成功"
+        "签到成功 🎉"
     };
   }
 
   /*
-   * 提取后端返回的可读信息
+   * 7. 其他后端信息
+   *
+   * 仅提取非广告、非无关内容。
    */
   const message =
-    extractMessage(data);
+    extractUsefulMessage(
+      data
+    );
 
   if (message) {
     return {
@@ -510,8 +560,11 @@ function parseResult(
     };
   }
 
+  /*
+   * 8. 最后才输出原始响应片段
+   */
   const cleaned =
-    data
+    readable
       .replace(/\s+/g, " ")
       .trim();
 
@@ -530,12 +583,40 @@ function parseResult(
 
 
 /**
- * 提取 message / description
+ * 尝试把 Next.js / JSON 中的一些转义字符还原
  */
-function extractMessage(data) {
+function decodeResponseText(data) {
+  return String(data || "")
+    .replace(/\\"/g, "\"")
+    .replace(/\\n/g, "\n")
+    .replace(/\\r/g, "\r")
+    .replace(/\\t/g, "\t")
+    .replace(/\\u([\dA-Fa-f]{4})/g, (_, code) => {
+      try {
+        return String.fromCharCode(
+          parseInt(code, 16)
+        );
+      } catch (_) {
+        return _;
+      }
+    });
+}
+
+
+/**
+ * 从整个响应中直接提取签到奖励积分
+ *
+ * 支持：
+ * 签到成功，获得12积分
+ * 签到成功, 获得 12 积分
+ * 获得 12 积分
+ * +12 积分
+ */
+function extractSignReward(data) {
   const patterns = [
-    /"description"\s*:\s*"([^"]+)"/,
-    /"message"\s*:\s*"([^"]+)"/
+    /签到成功[，,\s：:]*获得\s*\+?(\d+)\s*积分/i,
+    /签到[^\n"\\]{0,30}获得\s*\+?(\d+)\s*积分/i,
+    /获得\s*\+?(\d+)\s*积分/i
   ];
 
   for (const pattern of patterns) {
@@ -546,7 +627,68 @@ function extractMessage(data) {
       match &&
       match[1]
     ) {
-      return match[1];
+      return Number(
+        match[1]
+      );
+    }
+  }
+
+  return null;
+}
+
+
+/**
+ * 专门从 message / description 中寻找签到相关文本
+ */
+function extractSignMessage(data) {
+  const values =
+    extractMessageValues(
+      data
+    );
+
+  for (const value of values) {
+    const text =
+      decodeResponseText(
+        value
+      ).trim();
+
+    if (!text) {
+      continue;
+    }
+
+    if (isIgnoredMessage(text)) {
+      continue;
+    }
+
+    /*
+     * 如果里面直接包含积分，
+     * 优先格式化。
+     */
+    const reward =
+      extractSignReward(
+        text
+      );
+
+    if (reward !== null) {
+      return (
+        `签到成功，获得 ${reward} 积分 🎉`
+      );
+    }
+
+    /*
+     * 只允许明显与签到有关的字段
+     */
+    if (
+      text.includes("签到成功") ||
+      text.includes("签到完成") ||
+      text.includes("已经签到") ||
+      text.includes("已签到") ||
+      (
+        text.includes("签到") &&
+        text.includes("积分")
+      )
+    ) {
+      return text;
     }
   }
 
@@ -555,7 +697,92 @@ function extractMessage(data) {
 
 
 /**
- * 与你实际抓包保持一致
+ * 提取其他有用 message / description
+ */
+function extractUsefulMessage(data) {
+  const values =
+    extractMessageValues(
+      data
+    );
+
+  for (const value of values) {
+    const text =
+      decodeResponseText(
+        value
+      ).trim();
+
+    if (!text) {
+      continue;
+    }
+
+    if (isIgnoredMessage(text)) {
+      continue;
+    }
+
+    /*
+     * 普通过长页面内容不作为通知
+     */
+    if (text.length > 150) {
+      continue;
+    }
+
+    return text;
+  }
+
+  return "";
+}
+
+
+/**
+ * 提取所有 message / description，而不是只取第一个
+ */
+function extractMessageValues(data) {
+  const results = [];
+
+  const pattern =
+    /"(?:description|message)"\s*:\s*"((?:\\.|[^"\\])*)"/g;
+
+  let match;
+
+  while (
+    (
+      match =
+        pattern.exec(data)
+    ) !== null
+  ) {
+    if (match[1]) {
+      results.push(
+        match[1]
+      );
+    }
+  }
+
+  return results;
+}
+
+
+/**
+ * 过滤和签到无关的页面内容
+ */
+function isIgnoredMessage(text) {
+  const ignored = [
+    "TG 通知广告",
+    "TG通知广告",
+    "通知广告",
+    "Telegram 广告",
+    "Telegram广告",
+    "广告"
+  ];
+
+  return ignored.some(
+    keyword =>
+      text.includes(keyword)
+  );
+}
+
+
+/**
+ * 与实际抓包保持一致
  */
 function browserUA() {
   return (
