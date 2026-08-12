@@ -350,9 +350,6 @@ function mergeResponseCookies(
       continue;
     }
 
-    /*
-     * 空值相当于删除 Cookie
-     */
     if (!value) {
       delete jar[name];
     } else {
@@ -422,20 +419,14 @@ function parseResult(
     String(text || "");
 
   /*
-   * 为了方便识别 Flight / JSON 字符串，
-   * 同时生成一个简单解码后的文本版本。
-   */
-  const readable =
-    decodeResponseText(data);
-
-  /*
    * 1. 已签到
    */
   if (
-    readable.includes("你已经签到过了") ||
-    readable.includes("明天再来") ||
-    readable.includes("今日已签到") ||
-    readable.includes("无需重复签到")
+    data.includes("你已经签到过了") ||
+    data.includes("明天再来") ||
+    data.includes("今日已签到") ||
+    data.includes("已经签到") ||
+    data.includes("无需重复签到")
   ) {
     return {
       success: true,
@@ -446,11 +437,31 @@ function parseResult(
   }
 
   /*
-   * 2. 安全参数过期 / 更新
+   * 2. 明确签到成功
    */
   if (
-    readable.includes("安全验证已更新") ||
-    readable.includes("请重试")
+    data.includes("签到成功") ||
+    data.includes('"success":true') ||
+    data.includes('"success": true')
+  ) {
+    const points =
+      extractSignPoints(data);
+
+    return {
+      success: true,
+      securityUpdated: false,
+      message:
+        points
+          ? `签到成功，获得 ${points} 积分`
+          : "签到成功"
+    };
+  }
+
+  /*
+   * 3. 安全参数更新
+   */
+  if (
+    data.includes("安全验证已更新")
   ) {
     return {
       success: false,
@@ -461,12 +472,12 @@ function parseResult(
   }
 
   /*
-   * 3. 登录状态失效
+   * 4. 登录状态失效
    */
   if (
-    readable.includes("未登录") ||
-    readable.includes("登录失效") ||
-    readable.includes("Unauthorized") ||
+    data.includes("未登录") ||
+    data.includes("登录失效") ||
+    data.includes("Unauthorized") ||
     status === 401
   ) {
     return {
@@ -486,38 +497,26 @@ function parseResult(
     };
   }
 
-  /*
-   * 4. 优先识别：
-   *    签到成功，获得 12 积分
-   */
-  const reward =
-    extractSignReward(
-      readable
-    );
-
-  if (reward !== null) {
+  if (status === 404) {
     return {
-      success: true,
+      success: false,
       securityUpdated: false,
       message:
-        `签到成功，获得 ${reward} 积分 🎉`
+        "HTTP 404\nServer Action 不存在或已失效。"
     };
   }
 
   /*
-   * 5. 查找真正与签到有关的 message / description
-   *
-   * 不再直接拿第一个 description，
-   * 防止再次抓到「TG 通知广告」。
+   * 5. 尝试提取真正与签到有关的 message / description
    */
   const signMessage =
-    extractSignMessage(
-      data
-    );
+    extractSignMessage(data);
 
   if (signMessage) {
     return {
-      success: true,
+      success:
+        signMessage.includes("成功") ||
+        signMessage.includes("已签到"),
       securityUpdated: false,
       message:
         signMessage
@@ -525,46 +524,27 @@ function parseResult(
   }
 
   /*
-   * 6. 明确签到成功
+   * 6. HTTP 2xx，但响应里没有明确签到字段
+   *
+   * 不再把 TG 通知广告等无关字段当结果。
    */
   if (
-    readable.includes("签到成功") ||
-    readable.includes('"success":true') ||
-    readable.includes('"success": true') ||
-    data.includes('"success":true') ||
-    data.includes('"success": true')
+    status >= 200 &&
+    status < 300
   ) {
     return {
       success: true,
       securityUpdated: false,
       message:
-        "签到成功 🎉"
+        "签到请求已完成"
     };
   }
 
   /*
-   * 7. 其他后端信息
-   *
-   * 仅提取非广告、非无关内容。
-   */
-  const message =
-    extractUsefulMessage(
-      data
-    );
-
-  if (message) {
-    return {
-      success: false,
-      securityUpdated: false,
-      message
-    };
-  }
-
-  /*
-   * 8. 最后才输出原始响应片段
+   * 7. 真正异常响应
    */
   const cleaned =
-    readable
+    data
       .replace(/\s+/g, " ")
       .trim();
 
@@ -583,40 +563,12 @@ function parseResult(
 
 
 /**
- * 尝试把 Next.js / JSON 中的一些转义字符还原
+ * 只提取与签到有关的 message / description
  */
-function decodeResponseText(data) {
-  return String(data || "")
-    .replace(/\\"/g, "\"")
-    .replace(/\\n/g, "\n")
-    .replace(/\\r/g, "\r")
-    .replace(/\\t/g, "\t")
-    .replace(/\\u([\dA-Fa-f]{4})/g, (_, code) => {
-      try {
-        return String.fromCharCode(
-          parseInt(code, 16)
-        );
-      } catch (_) {
-        return _;
-      }
-    });
-}
-
-
-/**
- * 从整个响应中直接提取签到奖励积分
- *
- * 支持：
- * 签到成功，获得12积分
- * 签到成功, 获得 12 积分
- * 获得 12 积分
- * +12 积分
- */
-function extractSignReward(data) {
+function extractSignMessage(data) {
   const patterns = [
-    /签到成功[，,\s：:]*获得\s*\+?(\d+)\s*积分/i,
-    /签到[^\n"\\]{0,30}获得\s*\+?(\d+)\s*积分/i,
-    /获得\s*\+?(\d+)\s*积分/i
+    /"description"\s*:\s*"([^"]*签到[^"]*)"/,
+    /"message"\s*:\s*"([^"]*签到[^"]*)"/
   ];
 
   for (const pattern of patterns) {
@@ -627,68 +579,9 @@ function extractSignReward(data) {
       match &&
       match[1]
     ) {
-      return Number(
+      return decodeText(
         match[1]
       );
-    }
-  }
-
-  return null;
-}
-
-
-/**
- * 专门从 message / description 中寻找签到相关文本
- */
-function extractSignMessage(data) {
-  const values =
-    extractMessageValues(
-      data
-    );
-
-  for (const value of values) {
-    const text =
-      decodeResponseText(
-        value
-      ).trim();
-
-    if (!text) {
-      continue;
-    }
-
-    if (isIgnoredMessage(text)) {
-      continue;
-    }
-
-    /*
-     * 如果里面直接包含积分，
-     * 优先格式化。
-     */
-    const reward =
-      extractSignReward(
-        text
-      );
-
-    if (reward !== null) {
-      return (
-        `签到成功，获得 ${reward} 积分 🎉`
-      );
-    }
-
-    /*
-     * 只允许明显与签到有关的字段
-     */
-    if (
-      text.includes("签到成功") ||
-      text.includes("签到完成") ||
-      text.includes("已经签到") ||
-      text.includes("已签到") ||
-      (
-        text.includes("签到") &&
-        text.includes("积分")
-      )
-    ) {
-      return text;
     }
   }
 
@@ -697,87 +590,41 @@ function extractSignMessage(data) {
 
 
 /**
- * 提取其他有用 message / description
+ * 提取签到积分
  */
-function extractUsefulMessage(data) {
-  const values =
-    extractMessageValues(
-      data
-    );
-
-  for (const value of values) {
-    const text =
-      decodeResponseText(
-        value
-      ).trim();
-
-    if (!text) {
-      continue;
-    }
-
-    if (isIgnoredMessage(text)) {
-      continue;
-    }
-
-    /*
-     * 普通过长页面内容不作为通知
-     */
-    if (text.length > 150) {
-      continue;
-    }
-
-    return text;
-  }
-
-  return "";
-}
-
-
-/**
- * 提取所有 message / description，而不是只取第一个
- */
-function extractMessageValues(data) {
-  const results = [];
-
-  const pattern =
-    /"(?:description|message)"\s*:\s*"((?:\\.|[^"\\])*)"/g;
-
-  let match;
-
-  while (
-    (
-      match =
-        pattern.exec(data)
-    ) !== null
-  ) {
-    if (match[1]) {
-      results.push(
-        match[1]
-      );
-    }
-  }
-
-  return results;
-}
-
-
-/**
- * 过滤和签到无关的页面内容
- */
-function isIgnoredMessage(text) {
-  const ignored = [
-    "TG 通知广告",
-    "TG通知广告",
-    "通知广告",
-    "Telegram 广告",
-    "Telegram广告",
-    "广告"
+function extractSignPoints(data) {
+  const patterns = [
+    /获得\s*(\d+)\s*积分/,
+    /签到成功[^0-9]{0,30}(\d+)\s*积分/,
+    /"points"\s*:\s*(\d+)/,
+    /"point"\s*:\s*(\d+)/,
+    /"score"\s*:\s*(\d+)/
   ];
 
-  return ignored.some(
-    keyword =>
-      text.includes(keyword)
-  );
+  for (const pattern of patterns) {
+    const match =
+      data.match(pattern);
+
+    if (
+      match &&
+      match[1]
+    ) {
+      return match[1];
+    }
+  }
+
+  return "";
+}
+
+
+/**
+ * 简单处理 JSON 转义
+ */
+function decodeText(text) {
+  return String(text || "")
+    .replace(/\\n/g, "\n")
+    .replace(/\\"/g, "\"")
+    .replace(/\\\\/g, "\\");
 }
 
 
