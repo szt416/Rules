@@ -1,5 +1,5 @@
-name: "HDHive 自动签到"
-description: "自动捕获 HDHive Cookie 与 Server Action 参数，并执行每日签到"
+name: "影巢自动签到"
+description: "自动捕获一个影巢 Cookie 与 Server Action 参数，并执行每日签到"
 author: "Szt416"
 icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/HDHive.png"
 
