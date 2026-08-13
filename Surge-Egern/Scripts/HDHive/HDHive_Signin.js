@@ -149,7 +149,6 @@ export default async function (ctx) {
   });
 }
 
-
 /**
  * 访问首页刷新短期安全 Cookie
  */
@@ -203,7 +202,6 @@ async function refreshSession(
     return cookie;
   }
 }
-
 
 /**
  * 真正执行签到
@@ -299,7 +297,6 @@ async function performSign(
   }
 }
 
-
 /**
  * 将响应中的 Set-Cookie 合并回现有 Cookie
  */
@@ -350,6 +347,9 @@ function mergeResponseCookies(
       continue;
     }
 
+    /*
+     * 空值相当于删除 Cookie
+     */
     if (!value) {
       delete jar[name];
     } else {
@@ -364,7 +364,6 @@ function mergeResponseCookies(
     )
     .join("; ");
 }
-
 
 /**
  * Cookie 字符串转对象
@@ -407,7 +406,6 @@ function parseCookieHeader(cookie) {
   return jar;
 }
 
-
 /**
  * 解析签到返回
  */
@@ -419,13 +417,12 @@ function parseResult(
     String(text || "");
 
   /*
-   * 1. 已签到
+   * 已签到
    */
   if (
     data.includes("你已经签到过了") ||
     data.includes("明天再来") ||
     data.includes("今日已签到") ||
-    data.includes("已经签到") ||
     data.includes("无需重复签到")
   ) {
     return {
@@ -437,31 +434,11 @@ function parseResult(
   }
 
   /*
-   * 2. 明确签到成功
+   * 安全参数过期 / 更新
    */
   if (
-    data.includes("签到成功") ||
-    data.includes('"success":true') ||
-    data.includes('"success": true')
-  ) {
-    const points =
-      extractSignPoints(data);
-
-    return {
-      success: true,
-      securityUpdated: false,
-      message:
-        points
-          ? `签到成功，获得 ${points} 积分`
-          : "签到成功"
-    };
-  }
-
-  /*
-   * 3. 安全参数更新
-   */
-  if (
-    data.includes("安全验证已更新")
+    data.includes("安全验证已更新") ||
+    data.includes("请重试")
   ) {
     return {
       success: false,
@@ -472,7 +449,7 @@ function parseResult(
   }
 
   /*
-   * 4. 登录状态失效
+   * 登录状态失效
    */
   if (
     data.includes("未登录") ||
@@ -497,52 +474,37 @@ function parseResult(
     };
   }
 
-  if (status === 404) {
-    return {
-      success: false,
-      securityUpdated: false,
-      message:
-        "HTTP 404\nServer Action 不存在或已失效。"
-    };
-  }
-
   /*
-   * 5. 尝试提取真正与签到有关的 message / description
-   */
-  const signMessage =
-    extractSignMessage(data);
-
-  if (signMessage) {
-    return {
-      success:
-        signMessage.includes("成功") ||
-        signMessage.includes("已签到"),
-      securityUpdated: false,
-      message:
-        signMessage
-    };
-  }
-
-  /*
-   * 6. HTTP 2xx，但响应里没有明确签到字段
-   *
-   * 不再把 TG 通知广告等无关字段当结果。
+   * 签到成功
    */
   if (
-    status >= 200 &&
-    status < 300
+    data.includes("签到成功") ||
+    data.includes('"success":true') ||
+    data.includes('"success": true')
   ) {
     return {
       success: true,
       securityUpdated: false,
       message:
-        "签到请求已完成"
+        extractMessage(data) ||
+        "签到成功"
     };
   }
 
   /*
-   * 7. 真正异常响应
+   * 提取后端返回的可读信息
    */
+  const message =
+    extractMessage(data);
+
+  if (message) {
+    return {
+      success: false,
+      securityUpdated: false,
+      message
+    };
+  }
+
   const cleaned =
     data
       .replace(/\s+/g, " ")
@@ -561,44 +523,13 @@ function parseResult(
   };
 }
 
-
 /**
- * 只提取与签到有关的 message / description
+ * 提取 message / description
  */
-function extractSignMessage(data) {
+function extractMessage(data) {
   const patterns = [
-    /"description"\s*:\s*"([^"]*签到[^"]*)"/,
-    /"message"\s*:\s*"([^"]*签到[^"]*)"/
-  ];
-
-  for (const pattern of patterns) {
-    const match =
-      data.match(pattern);
-
-    if (
-      match &&
-      match[1]
-    ) {
-      return decodeText(
-        match[1]
-      );
-    }
-  }
-
-  return "";
-}
-
-
-/**
- * 提取签到积分
- */
-function extractSignPoints(data) {
-  const patterns = [
-    /获得\s*(\d+)\s*积分/,
-    /签到成功[^0-9]{0,30}(\d+)\s*积分/,
-    /"points"\s*:\s*(\d+)/,
-    /"point"\s*:\s*(\d+)/,
-    /"score"\s*:\s*(\d+)/
+    /"description"\s*:\s*"([^"]+)"/,
+    /"message"\s*:\s*"([^"]+)"/
   ];
 
   for (const pattern of patterns) {
@@ -616,20 +547,8 @@ function extractSignPoints(data) {
   return "";
 }
 
-
 /**
- * 简单处理 JSON 转义
- */
-function decodeText(text) {
-  return String(text || "")
-    .replace(/\\n/g, "\n")
-    .replace(/\\"/g, "\"")
-    .replace(/\\\\/g, "\\");
-}
-
-
-/**
- * 与实际抓包保持一致
+ * 与你实际抓包保持一致
  */
 function browserUA() {
   return (
