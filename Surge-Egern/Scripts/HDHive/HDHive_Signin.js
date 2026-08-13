@@ -149,6 +149,7 @@ export default async function (ctx) {
   });
 }
 
+
 /**
  * 访问首页刷新短期安全 Cookie
  */
@@ -202,6 +203,7 @@ async function refreshSession(
     return cookie;
   }
 }
+
 
 /**
  * 真正执行签到
@@ -297,6 +299,7 @@ async function performSign(
   }
 }
 
+
 /**
  * 将响应中的 Set-Cookie 合并回现有 Cookie
  */
@@ -365,6 +368,7 @@ function mergeResponseCookies(
     .join("; ");
 }
 
+
 /**
  * Cookie 字符串转对象
  */
@@ -405,6 +409,7 @@ function parseCookieHeader(cookie) {
 
   return jar;
 }
+
 
 /**
  * 解析签到返回
@@ -523,6 +528,7 @@ function parseResult(
   };
 }
 
+
 /**
  * 提取 message / description
  */
@@ -546,6 +552,7 @@ function extractMessage(data) {
 
   return "";
 }
+
 
 /**
  * 与你实际抓包保持一致
