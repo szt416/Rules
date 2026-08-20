@@ -1,4 +1,4 @@
-name: "源论坛 YCOO 签到"
+name: "源论坛 YCOO 签到 v2.4"
 description: "ycoo.net 自动签到：23:59 预取 formhash，00:00:00 尝试抢签到排名；失败时自动重新获取 formhash 兜底签到。"
 author: "Szt416"
 icon: ""
@@ -31,7 +31,7 @@ scriptings:
   - http_response:
       name: "源论坛 Cookie"
       match: "^https://(?:www\\.)?ycoo\\.net/k_misign-sign\\.html(?:\\?.*)?$"
-      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin.js"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin_v2.4.js"
       body_required: false
       timeout: 30
       max_size: 1048576
@@ -42,6 +42,6 @@ scriptings:
       name: "源论坛签到"
       cron: "{{{MINUTE}}} {{{HOUR}}} * * *"
       timeout: 120
-      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin.js"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin_v2.4.js"
       env:
         MODE: "checkin"
