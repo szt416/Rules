@@ -1,7 +1,7 @@
-name: "源论坛 YCOO 签到 v2.4"
-description: "ycoo.net 自动签到：23:59 预取 formhash，00:00:00 尝试抢签到排名；失败时自动重新获取 formhash 兜底签到。"
+name: "源论坛签到（抢排名）"
+description: "源论坛自动签到：23:59预取formhash，00:00:00尝试抢签到排名；失败时自动重新获取formhash兜底签到。无需修改任何参数，只需要获取cookie"
 author: "Szt416"
-icon: ""
+icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/YCOO.png"
 
 compat_arguments:
   MINUTE: "59"
