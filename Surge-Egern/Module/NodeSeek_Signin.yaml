@@ -1,4 +1,4 @@
-name: "NodeSeek 签到增强版"
+name: "NodeSeek签到"
 description: "NodeSeek 每日自动签到。支持 Cookie 自动抓取、Session 过期提醒、随机奖励模式和 Telegram 推送。"
 author: "Egern native adaptation"
 homepage: "https://github.com/szt416"
