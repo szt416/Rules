@@ -1,0 +1,83 @@
+name: "NodeSeek 签到增强版"
+description: "NodeSeek 每日自动签到。支持 Cookie 自动抓取、Session 过期提醒、随机奖励模式和 Telegram 推送。"
+author: "Roddy-D / Egern native adaptation"
+homepage: "https://github.com/Roddy-D/modules"
+icon: "https://raw.githubusercontent.com/Roddy-D/Loon_plugins/refs/heads/main/icon/nscheckin.png"
+
+# 注意：
+# 原 Surge 模块默认 cron 为 1 0 * * *，实际表示每天 00:01。
+# 若你想每天 01:00 执行，请把 SIGN_CRON 改为 0 1 * * *。
+#
+# SCRIPT_URL 必须改成你自己托管的 nscheckin_egern.js 原始链接。
+compat_arguments:
+  SIGN_CRON: "1 0 * * *"
+  SCRIPT_URL: "https://raw.githubusercontent.com/YOUR_GITHUB/YOUR_REPO/main/Scripts/NodeSeek/nscheckin_egern.js"
+
+compat_arguments_desc: |
+  SIGN_CRON:
+    NodeSeek 自动签到时间，使用标准 5 字段 cron。
+    默认 1 0 * * * = 每天 00:01。
+    如需每天 01:00，请填写 0 1 * * *。
+
+  SCRIPT_URL:
+    Egern 原生 JS 的 Raw URL。
+    请上传 nscheckin_egern.js 后，把这里替换为对应 raw.githubusercontent.com 地址。
+
+env_schema:
+  ENABLE_CAPTURE:
+    name: "Cookie 抓取"
+    description: "开启后登录 NodeSeek，并访问个人页面一次即可自动保存 Cookie；抓取成功后建议关闭。"
+    default_value: "true"
+    options:
+      - "true"
+      - "false"
+
+  NS_COOKIE:
+    name: "NodeSeek Cookie"
+    description: "可选。留空时优先使用自动抓取并保存在 Egern storage 中的 Cookie。"
+    default_value: ""
+
+  TG_BOT_TOKEN:
+    name: "TG Bot Token"
+    description: "可选。Telegram Bot Token。"
+    default_value: ""
+
+  TG_USER_ID:
+    name: "TG User ID"
+    description: "可选。接收 Telegram 通知的用户/Chat ID。"
+    default_value: ""
+
+  TG_NOTIFY_ONLY_FAIL:
+    name: "TG 仅失败时通知"
+    description: "开启后，成功签到不推送 Telegram；失败、风控、异常仍会推送。"
+    default_value: "false"
+    options:
+      - "true"
+      - "false"
+
+  RANDOM_REWARD:
+    name: "随机奖励模式"
+    description: "关闭 = 固定保底奖励；开启 = 随机抽奖模式。"
+    default_value: "false"
+    options:
+      - "true"
+      - "false"
+
+scriptings:
+  - http_request:
+      name: "NodeSeek Cookie 抓取"
+      match: "^https://www\\.nodeseek\\.com/api/account/getInfo/\\d+\\?readme=1$"
+      script_url: "{{{SCRIPT_URL}}}"
+      body_required: false
+      timeout: 30
+
+  - schedule:
+      name: "NodeSeek 自动签到"
+      cron: "{{{SIGN_CRON}}}"
+      script_url: "{{{SCRIPT_URL}}}"
+      timeout: 60
+
+mitm:
+  hostnames:
+    includes:
+      - "www.nodeseek.com"
