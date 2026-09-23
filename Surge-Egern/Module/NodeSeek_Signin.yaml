@@ -4,11 +4,6 @@ author: "Egern native adaptation"
 homepage: "https://github.com/szt416"
 icon: "https://raw.githubusercontent.com/Roddy-D/Loon_plugins/refs/heads/main/icon/nscheckin.png"
 
-# 注意：
-# 原 Surge 模块默认 cron 为 1 0 * * *，实际表示每天 00:01。
-# 若你想每天 01:00 执行，请把 SIGN_CRON 改为 0 1 * * *。
-#
-# SCRIPT_URL 必须改成你自己托管的 nscheckin_egern.js 原始链接。
 compat_arguments:
   SIGN_CRON: "1 0 * * *"
   SCRIPT_URL: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/NodeSeek_Cookie.js"
