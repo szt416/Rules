@@ -2,7 +2,7 @@ name: "NodeSeek签到"
 description: "NodeSeek 自动签到，支持 Cookie 自动抓取、随机奖励、Cookie 过期提醒及 Telegram 通知。"
 author: "Egern Adaptation"
 homepage: "https://github.com/szt416"
-icon: "https://raw.githubusercontent.com/Roddy-D/Loon_plugins/refs/heads/main/icon/nscheckin.png"
+icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/NodeSeek.png"
 
 compat_arguments:
   MINUTE: "10"
