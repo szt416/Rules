@@ -1,7 +1,7 @@
 name: "NodeSeek 签到增强版"
 description: "NodeSeek 每日自动签到。支持 Cookie 自动抓取、Session 过期提醒、随机奖励模式和 Telegram 推送。"
-author: "Roddy-D / Egern native adaptation"
-homepage: "https://github.com/Roddy-D/modules"
+author: "Egern native adaptation"
+homepage: "https://github.com/szt416"
 icon: "https://raw.githubusercontent.com/Roddy-D/Loon_plugins/refs/heads/main/icon/nscheckin.png"
 
 # 注意：
@@ -11,7 +11,7 @@ icon: "https://raw.githubusercontent.com/Roddy-D/Loon_plugins/refs/heads/main/ic
 # SCRIPT_URL 必须改成你自己托管的 nscheckin_egern.js 原始链接。
 compat_arguments:
   SIGN_CRON: "1 0 * * *"
-  SCRIPT_URL: "https://raw.githubusercontent.com/YOUR_GITHUB/YOUR_REPO/main/Scripts/NodeSeek/nscheckin_egern.js"
+  SCRIPT_URL: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/NodeSeek_Cookie.js"
 
 compat_arguments_desc: |
   SIGN_CRON:
