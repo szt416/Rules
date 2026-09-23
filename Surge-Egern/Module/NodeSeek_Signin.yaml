@@ -27,7 +27,7 @@ env_schema:
   ENABLE_CAPTURE:
     name: "Cookie 抓取"
     description: "开启后登录 NodeSeek，并访问个人页面一次即可自动保存 Cookie；抓取成功后建议关闭。"
-    default_value: "true"
+    default_value: "false"
     options:
       - "true"
       - "false"
