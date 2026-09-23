@@ -1,7 +1,7 @@
 /*
  * NodeSeek 签到增强版 · Egern 原生脚本
  * 原 Surge 模块/脚本作者：Roddy-D
- * Egern 原生适配：使用 ctx.http / ctx.storage / ctx.notify / ctx.env
+ * Egern 原生适配：使用
  *
  * 功能：
  * 1. 访问 NodeSeek 个人信息接口时抓取 Cookie
