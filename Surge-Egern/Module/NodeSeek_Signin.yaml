@@ -1,6 +1,6 @@
 name: "NodeSeek签到"
 description: "NodeSeek 自动签到，支持 Cookie 自动抓取、随机奖励、Cookie 过期提醒及 Telegram 通知。"
-author: "Egern Adaptation"
+author: "Szt416"
 homepage: "https://github.com/szt416"
 icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/NodeSeek.png"
 
