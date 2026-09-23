@@ -57,8 +57,8 @@ env_schema:
 
   RANDOM_REWARD:
     name: "随机奖励模式"
-    description: "关闭 = 固定保底奖励；开启 = 随机抽奖模式。"
-    default_value: "false"
+    description: "关闭 = 固定鸡腿；开启 = 随机鸡腿。"
+    default_value: "true"
     options:
       - "true"
       - "false"
