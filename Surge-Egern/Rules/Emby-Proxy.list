@@ -21,8 +21,7 @@ DOMAIN,115cdn.de
 #月饼
 DOMAIN-SUFFIX,emby.my
 #酥糖
-DOMAIN,stjps.sttss.de
-DOMAIN-SUFFIX,sakim.org
+DOMAIN-KEYWORD,sttss
 #Doubon
 DOMAIN-SUFFIX,114514.quest
 #SDL
