@@ -1,341 +1,258 @@
-/******************************
-脚本名称: HDHaven 自动签到
-Version : v0.2.0
-更新时间: 2026-09-30
-平台: Egern
+const SCRIPT_NAME = 'HDHaven 签到';
+const STORE_KEY = 'hdhaven_cookie';
+const BASE_URL = 'https://hdhaven.com';
+const DEFAULT_CHECKIN_PATH = '/api/check-in';
 
-方案:
-- 完全按照 HDHive 的 Next.js Server Action 思路
-- 手动签到时自动捕获：
-  Cookie
-  next-action
-  next-router-state-tree
-  请求 Body
-- 定时任务原样重放 POST https://hdhaven.com/
-
-使用:
-1. 开启「签到捕获」
-2. 登录 hdhaven.com
-3. 手动点击一次签到
-4. 收到“签到参数捕获成功”通知后关闭捕获
-5. 后续每天自动签到
-*******************************/
-
-const SCRIPT_NAME = "HDHaven 签到";
-const BASE_URL = "https://hdhaven.com/";
-
-const KEY_COOKIE = "HDHaven_Cookie";
-const KEY_ACTION = "HDHaven_Action_ID";
-const KEY_ROUTER = "HDHaven_Router_State";
-const KEY_BODY = "HDHaven_Sign_Body";
-
-function log(msg) {
-  console.log("[" + SCRIPT_NAME + "] " + msg);
+function log(message) {
+  console.log(`[${SCRIPT_NAME}] ${message}`);
 }
 
 function envTrue(env, key) {
-  if (!env || env[key] == null || String(env[key]).trim() === "") return false;
-  return ["1", "true", "yes", "on"].includes(
-    String(env[key]).trim().toLowerCase()
-  );
+  const value = env && env[key] != null ? String(env[key]).trim().toLowerCase() : '';
+  return ['1', 'true', 'yes', 'on'].includes(value);
+}
+
+function pad2(value) {
+  return String(value).padStart(2, '0');
+}
+
+function currentMonth() {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}`;
+}
+
+function buildCheckinUrl(ctx) {
+  const path = (ctx.env && ctx.env.CHECKIN_PATH) || DEFAULT_CHECKIN_PATH;
+  const url = new URL(path, BASE_URL);
+  if (!url.searchParams.has('month')) url.searchParams.set('month', currentMonth());
+  return url.toString();
 }
 
 function getHeader(headers, name) {
-  if (!headers) return "";
-  const lower = String(name).toLowerCase();
+  if (!headers) return '';
+  const lower = name.toLowerCase();
 
-  for (const key of Object.keys(headers)) {
-    if (String(key).toLowerCase() === lower) {
-      return headers[key];
-    }
+  if (typeof headers.get === 'function') {
+    return headers.get(name) || headers.get(lower) || '';
   }
 
-  return "";
+  for (const key of Object.keys(headers)) {
+    if (String(key).toLowerCase() === lower) return headers[key];
+  }
+
+  return '';
+}
+
+function parseCookieString(cookie) {
+  const map = {};
+  String(cookie || '').split(';').forEach((part) => {
+    const index = part.indexOf('=');
+    if (index <= 0) return;
+    const key = part.slice(0, index).trim();
+    const value = part.slice(index + 1).trim();
+    if (key) map[key] = value;
+  });
+  return map;
+}
+
+function cookieMapToString(map) {
+  return Object.keys(map).map((key) => `${key}=${map[key]}`).join('; ');
+}
+
+function mergeSetCookie(baseCookie, headers) {
+  const map = parseCookieString(baseCookie);
+  let setCookie = getHeader(headers, 'set-cookie');
+  if (!setCookie) return baseCookie;
+
+  if (!Array.isArray(setCookie)) {
+    setCookie = String(setCookie).split(/,(?=\s*[^;,=\s]+=[^;,]*)/g);
+  }
+
+  for (const item of setCookie) {
+    const first = String(item || '').split(';')[0];
+    const index = first.indexOf('=');
+    if (index <= 0) continue;
+    const key = first.slice(0, index).trim();
+    const value = first.slice(index + 1).trim();
+    if (!key) continue;
+    if (value === '') delete map[key];
+    else map[key] = value;
+  }
+
+  return cookieMapToString(map);
+}
+
+function compact(text) {
+  return String(text || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 220);
+}
+
+function parseMessage(text, status) {
+  if (!text) return `HTTP ${status}`;
+
+  try {
+    const data = JSON.parse(text);
+    if (data && data.code === 0 && data.data && typeof data.data === 'object') {
+      const info = data.data;
+      const pointName = info.pointName || '积分';
+      const reward = info.checkInReward ?? info.reward ?? info.points;
+      const currentStreak = info.currentStreak ?? info.streak;
+      const maxStreak = info.maxStreak;
+      const month = info.month;
+      return [
+        '签到成功',
+        month ? `月份：${month}` : '',
+        reward !== undefined && reward !== null ? `奖励：${reward} ${pointName}` : '',
+        currentStreak !== undefined && currentStreak !== null ? `当前连续：${currentStreak} 天` : '',
+        maxStreak !== undefined && maxStreak !== null ? `最高连续：${maxStreak} 天` : '',
+      ].filter(Boolean).join('\n');
+    }
+
+    const message = data.message || data.msg || data.error || data.reason;
+    if (message) return String(message).slice(0, 220);
+    return JSON.stringify(data).slice(0, 220);
+  } catch {
+    return compact(text) || `HTTP ${status}`;
+  }
+}
+
+function textIncludesAny(text, words) {
+  const source = String(text || '').toLowerCase();
+  return words.some((word) => source.includes(String(word).toLowerCase()));
+}
+
+async function readText(response) {
+  try {
+    return await response.text();
+  } catch {
+    return '';
+  }
 }
 
 async function notify(ctx, subtitle, body) {
-  log(subtitle + ": " + body);
-
-  if (ctx && typeof ctx.notify === "function") {
-    try {
-      await ctx.notify({
-        title: SCRIPT_NAME,
-        subtitle: subtitle,
-        body: body,
-        sound: true
-      });
-      return;
-    } catch (e) {
-      log("ctx.notify 失败: " + (e && e.message ? e.message : e));
-    }
-  }
-
-  if (typeof $notification !== "undefined" && $notification.post) {
-    try {
-      $notification.post(SCRIPT_NAME, subtitle, body);
-    } catch (_) {}
-  }
-}
-
-function cleanText(text) {
-  return String(text || "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function looksSuccess(text) {
-  const t = cleanText(text);
-
-  return (
-    /签到成功|已签到|已经签到|今日已签|签到完成/i.test(t) ||
-    /check.?in.*success|success.*check.?in/i.test(t) ||
-    /"success"\s*:\s*true/i.test(t)
-  );
-}
-
-function looksAlready(text) {
-  return /已签到|已经签到|今日已签|already.*check|already.*sign/i.test(
-    cleanText(text)
-  );
-}
-
-function looksAuthError(status, text) {
-  return (
-    status === 401 ||
-    status === 403 ||
-    /未登录|登录失效|请登录|unauthorized|forbidden|login required/i.test(
-      cleanText(text)
-    )
-  );
-}
-
-/**
- * 捕获手动签到请求
- *
- * 必须命中：
- * POST https://hdhaven.com/
- * 且存在 next-action
- */
-async function captureSignRequest(ctx) {
-  const env = (ctx && ctx.env) || {};
-
-  if (!envTrue(env, "ENABLE_CAPTURE")) {
-    log("签到捕获已关闭，跳过");
-    return { response: ctx.response };
-  }
-
-  const req = (ctx && ctx.request) || {};
-  const headers = req.headers || {};
-  const method = String(req.method || "").toUpperCase();
-  const url = String(req.url || "");
-
-  if (method !== "POST") {
-    log("非 POST 请求，跳过");
-    return { response: ctx.response };
-  }
-
-  if (!/^https:\/\/hdhaven\.com\/(?:\?.*)?$/i.test(url)) {
-    log("不是 HDHaven 根路径 POST，跳过: " + url);
-    return { response: ctx.response };
-  }
-
-  const actionId = String(getHeader(headers, "next-action") || "").trim();
-
-  if (!actionId) {
-    log("未发现 next-action，不像 Next.js Server Action，跳过");
-    return { response: ctx.response };
-  }
-
-  const cookie = String(getHeader(headers, "cookie") || "").trim();
-  const routerState = String(
-    getHeader(headers, "next-router-state-tree") || ""
-  ).trim();
-
-  let body = "";
+  log(`${subtitle}: ${body}`);
+  if (!ctx || typeof ctx.notify !== 'function') return;
 
   try {
-    if (req.body !== undefined && req.body !== null) {
-      body =
-        typeof req.body === "string"
-          ? req.body
-          : JSON.stringify(req.body);
-    }
-  } catch (_) {}
-
-  if (!body) {
-    body = "[false]";
-    log("未读取到请求 Body，暂用 HDHive 默认 Body [false]");
+    await ctx.notify({ title: SCRIPT_NAME, subtitle, body, sound: true });
+  } catch (error) {
+    log(`通知失败: ${error && error.message ? error.message : error}`);
   }
+}
 
-  if (!cookie) {
-    await notify(
-      ctx,
-      "捕获失败",
-      "发现 next-action，但没有 Cookie"
-    );
+async function captureCookie(ctx) {
+  const env = (ctx && ctx.env) || {};
+  if (!envTrue(env, 'ENABLE_CAPTURE')) {
+    log('Cookie 捕获开关已关闭，跳过');
     return { response: ctx.response };
   }
 
-  await ctx.storage.set(KEY_COOKIE, cookie);
-  await ctx.storage.set(KEY_ACTION, actionId);
-  await ctx.storage.set(KEY_ROUTER, routerState);
-  await ctx.storage.set(KEY_BODY, body);
+  const headers = (ctx.request && ctx.request.headers) || {};
+  const cookie = String(getHeader(headers, 'cookie') || '').trim();
 
-  log("Cookie 长度: " + cookie.length);
-  log("next-action: " + actionId);
-  log("router-state 长度: " + routerState.length);
-  log("Body: " + body);
+  if (!cookie) {
+    await notify(ctx, 'Cookie 获取失败', '请求里没有 Cookie，请确认已经登录 HDHaven。');
+    return { response: ctx.response };
+  }
 
-  await notify(
-    ctx,
-    "签到参数捕获成功",
-    "已保存 Cookie / next-action / Router State / Body\n请关闭「签到捕获」开关"
-  );
-
+  await ctx.storage.set(STORE_KEY, cookie);
+  await notify(ctx, 'Cookie 保存成功', '已保存登录 Cookie，请关闭模块里的「Cookie 捕获」。');
   return { response: ctx.response };
 }
 
 async function doCheckIn(ctx) {
-  const cookie = String((await ctx.storage.get(KEY_COOKIE)) || "").trim();
-  const actionId = String((await ctx.storage.get(KEY_ACTION)) || "").trim();
-  const routerState = String(
-    (await ctx.storage.get(KEY_ROUTER)) || ""
-  ).trim();
-
-  let body = String((await ctx.storage.get(KEY_BODY)) || "").trim();
-
-  if (!body) {
-    body = "[false]";
-  }
-
+  let cookie = String((await ctx.storage.get(STORE_KEY)) || '').trim();
   if (!cookie) {
-    await notify(
-      ctx,
-      "缺少 Cookie",
-      "请先开启「签到捕获」，手动签到一次"
-    );
+    await notify(ctx, '缺少 Cookie', '请先打开「Cookie 捕获」，登录 HDHaven 并访问一次首页。');
     return;
   }
-
-  if (!actionId) {
-    await notify(
-      ctx,
-      "缺少 next-action",
-      "请开启「签到捕获」，然后在 HDHaven 手动签到一次"
-    );
-    return;
-  }
-
-  const headers = {
-    Accept: "text/x-component",
-    "Content-Type": "text/plain;charset=UTF-8",
-    Origin: "https://hdhaven.com",
-    Referer: "https://hdhaven.com/",
-    Cookie: cookie,
-    "next-action": actionId,
-    "User-Agent":
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1"
-  };
-
-  if (routerState) {
-    headers["next-router-state-tree"] = routerState;
-  }
-
-  log("开始执行 Server Action");
-  log("next-action: " + actionId);
-  log("Body: " + body);
 
   try {
-    const response = await ctx.http.post(BASE_URL, {
-      headers: headers,
-      body: body,
-      timeout: 20000
+    const url = buildCheckinUrl(ctx);
+    log(`GET ${url}`);
+
+    const response = await ctx.http.get(url, {
+      headers: {
+        Accept: '*/*',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,ja;q=0.5,ja-JP;q=0.4',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Cookie: cookie,
+        Pragma: 'no-cache',
+        Priority: 'u=1, i',
+        Referer: `${BASE_URL}/`,
+        'Sec-CH-UA': '"Chromium";v="154", "Microsoft Edge";v="154", "Not A(Brand";v="99"',
+        'Sec-CH-UA-Mobile': '?0',
+        'Sec-CH-UA-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0',
+      },
+      timeout: 20000,
     });
 
-    const status = response.status;
-    const text = await response.text();
-    const summary = cleanText(text).slice(0, 500);
+    const mergedCookie = mergeSetCookie(cookie, response.headers || {});
+    if (mergedCookie && mergedCookie !== cookie) {
+      cookie = mergedCookie;
+      await ctx.storage.set(STORE_KEY, cookie);
+      log('已合并并更新服务器返回的 Cookie');
+    }
 
-    log("HTTP " + status);
-    log("响应: " + summary);
+    const status = response.status || 0;
+    const text = await readText(response);
+    const message = parseMessage(text, status);
 
-    if (looksAlready(text)) {
-      await notify(
-        ctx,
-        "今日已签到",
-        summary || "无需重复签到"
-      );
+    log(`HTTP ${status}`);
+    log(`结果: ${message.replace(/\n/g, '；')}`);
+
+    if (status === 401 || status === 403 || textIncludesAny(text, [
+      'login',
+      '登录',
+      'sign in',
+    ])) {
+      await notify(ctx, 'Cookie 已失效', '请重新打开「Cookie 捕获」并访问 HDHaven 首页。');
       return;
     }
 
-    if (looksSuccess(text)) {
-      await notify(
-        ctx,
-        "签到成功",
-        summary || "Server Action 执行成功"
-      );
+    if (textIncludesAny(text, [
+      'already checked',
+      'already signed',
+      '已签到',
+      '今日已签到',
+      '已经签到',
+    ])) {
+      await notify(ctx, '今日已签到', message || '无需重复签到。');
       return;
     }
 
-    if (looksAuthError(status, text)) {
-      await notify(
-        ctx,
-        "登录状态失效",
-        "HTTP " + status + "\n请重新开启「签到捕获」并手动签到一次"
-      );
+    if (!(status >= 200 && status < 300)) {
+      await notify(ctx, '签到失败', `${status}: ${message}`);
       return;
     }
 
-    if (status >= 200 && status < 300) {
-      /**
-       * Next.js Server Action 很多响应不是标准 JSON，
-       * 可能是 RSC 数据流。
-       * HTTP 2xx 但未匹配关键词时，不直接误报签到成功。
-       */
-      await notify(
-        ctx,
-        "请求已发送",
-        "HTTP " +
-          status +
-          "\n未识别明确签到结果，请查看日志：\n" +
-          (summary || "响应为空")
-      );
-      return;
-    }
-
-    await notify(
-      ctx,
-      "签到失败",
-      "HTTP " +
-        status +
-        "\n" +
-        (summary || "请查看 Egern 日志")
-    );
+    await notify(ctx, '签到完成', message);
   } catch (error) {
-    const msg = error && error.message
-      ? error.message
-      : String(error);
-
-    log("执行异常: " + msg);
-
-    await notify(
-      ctx,
-      "运行异常",
-      msg.slice(0, 200)
-    );
+    const message = error && error.message ? error.message : String(error);
+    log(`异常: ${message}`);
+    await notify(ctx, '运行异常', message.slice(0, 200));
   }
 }
 
 async function main(ctx) {
   const env = (ctx && ctx.env) || {};
 
-  if (String(env.MODE || "").toLowerCase() === "checkin") {
+  if (String(env.MODE || '').toLowerCase() === 'checkin') {
     await doCheckIn(ctx);
     return;
   }
 
   if (ctx && ctx.request) {
-    return await captureSignRequest(ctx);
+    return await captureCookie(ctx);
   }
 
   await doCheckIn(ctx);
