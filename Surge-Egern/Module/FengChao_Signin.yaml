@@ -12,7 +12,6 @@ description: "fengchao.chat 自动捕获 Cookie 并每日签到"
 author: "Szt416"
 homepage: "https://github.com/szt416"
 icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/FengChao.png"
-open_url: "https://fengchao.chat/"
 
 compat_arguments:
   MINUTE: "10"
