@@ -9,19 +9,19 @@
 
 name: "蜂巢签到"
 description: "fengchao.chat 自动捕获 Cookie 并每日签到"
-author: "Codex"
-homepage: "https://fengchao.chat/"
-icon: "checkmark.seal.fill"
+author: "Szt416"
+homepage: ""
+icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/FengChao.png"
 open_url: "https://fengchao.chat/"
 
 compat_arguments:
-  MINUTE: "13"
-  HOUR: "08"
+  MINUTE: "10"
+  HOUR: "00"
   ENABLE_CAPTURE: "false"
 
 compat_arguments_desc: |
-  MINUTE=签到分钟，默认 13
-  HOUR=签到小时，默认 08
+  MINUTE=签到分钟，默认 10
+  HOUR=签到小时，默认 00
   ENABLE_CAPTURE=Cookie 捕获开关，true 开 / false 关
 
 env_schema:
