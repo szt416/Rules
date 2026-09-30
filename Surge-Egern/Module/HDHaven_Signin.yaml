@@ -1,0 +1,50 @@
+# HDHaven — Cookie 捕获 + 签到接口探测
+# 测试版：真实签到接口尚未确认
+# 默认每天 00:10 执行
+
+name: "HDHaven 签到"
+description: "hdhaven.com Cookie 捕获 + 签到接口探测"
+author: "Nullwhy"
+icon: "https://raw.githubusercontent.com/Nullwhy/Egern/main/Icon/Nullwhy.png"
+
+compat_arguments:
+  MINUTE: "10"
+  HOUR: "00"
+  ENABLE_CAPTURE: "false"
+
+compat_arguments_desc: |
+  MINUTE=签到分钟（默认 10）
+  HOUR=签到小时（默认 00）
+  ENABLE_CAPTURE=Cookie 捕获（true 开 / false 关）
+
+env_schema:
+  ENABLE_CAPTURE:
+    name: Cookie
+    description: 默认关闭；开启后登录 hdhaven.com 并访问首页保存 Cookie，成功后请关闭
+    default_value: "false"
+    options:
+      - "false"
+      - "true"
+
+mitm:
+  hostnames:
+    - hdhaven.com
+
+scriptings:
+  - http_response:
+      name: "HDHaven Cookie"
+      match: "^https://hdhaven\\.com/(?:\\?.*)?$"
+      script_url: "https://raw.githubusercontent.com/Nullwhy/Egern/main/Scripts/HDHaven.js"
+      body_required: false
+      timeout: 30
+      max_size: 1048576
+      env:
+        ENABLE_CAPTURE: "{{{ENABLE_CAPTURE}}}"
+
+  - schedule:
+      name: "HDHaven 签到"
+      cron: "{{{MINUTE}}} {{{HOUR}}} * * *"
+      timeout: 90
+      script_url: "https://raw.githubusercontent.com/Nullwhy/Egern/main/Scripts/HDHaven.js"
+      env:
+        MODE: "checkin"
