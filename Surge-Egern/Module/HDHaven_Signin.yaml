@@ -8,8 +8,11 @@
 # 5. 可在 Egern 脚本页面手动运行「HDHaven 签到」测试
 #
 # 说明：
-# 如果运行后提示 404 或接口不存在，请在浏览器开发者工具 Network 中点击签到，
-# 复制新增请求的 Copy as cURL 发给我，我再把 CHECKIN_PATH 改成真实接口。
+# 如果运行后提示 404 或接口不存在：
+# 1. 打开「Cookie 捕获」
+# 2. 在网站里手动点击一次签到
+# 3. 查看 Egern 日志里输出的 API 路径
+# 4. 把路径填到「签到路径」
 
 name: "HDHaven 签到"
 description: "hdhaven.com 自动捕获 Cookie 并每日签到"
@@ -50,7 +53,7 @@ mitm:
 scriptings:
   - http_response:
       name: "HDHaven Cookie"
-      match: "^https://hdhaven\\.com/(?:$|\\?|api/)"
+      match: "^https://hdhaven\\.com/.*"
       script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHaven/HDHaven_Signin.js"
       body_required: false
       timeout: 30
