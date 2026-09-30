@@ -4,8 +4,8 @@
 
 name: "HDHaven 签到"
 description: "hdhaven.com Cookie 捕获 + 签到接口探测"
-author: "Nullwhy"
-icon: "https://raw.githubusercontent.com/Nullwhy/Egern/main/Icon/Nullwhy.png"
+author: "Szt416"
+icon: ""
 
 compat_arguments:
   MINUTE: "10"
@@ -34,7 +34,7 @@ scriptings:
   - http_response:
       name: "HDHaven Cookie"
       match: "^https://hdhaven\\.com/(?:\\?.*)?$"
-      script_url: "https://raw.githubusercontent.com/Nullwhy/Egern/main/Scripts/HDHaven.js"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHaven/HDHaven_Signin.js"
       body_required: false
       timeout: 30
       max_size: 1048576
@@ -45,6 +45,6 @@ scriptings:
       name: "HDHaven 签到"
       cron: "{{{MINUTE}}} {{{HOUR}}} * * *"
       timeout: 90
-      script_url: "https://raw.githubusercontent.com/Nullwhy/Egern/main/Scripts/HDHaven.js"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHaven/HDHaven_Signin.js"
       env:
         MODE: "checkin"
