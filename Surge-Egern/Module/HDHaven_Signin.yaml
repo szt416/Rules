@@ -1,39 +1,56 @@
-# HDHaven — Cookie 捕获 + 签到接口探测
-# 测试版：真实签到接口尚未确认
-# 默认每天 00:10 执行
+# HDHaven — Cookie 捕获 + 定时签到
+#
+# 使用方法：
+# 1. 打开模块设置里的「Cookie 捕获」
+# 2. 在经过 Egern 的浏览器里登录 https://hdhaven.com/
+# 3. 登录后访问一次首页
+# 4. 收到「Cookie 保存成功」通知后，关闭「Cookie 捕获」
+# 5. 可在 Egern 脚本页面手动运行「HDHaven 签到」测试
+#
+# 说明：
+# 如果运行后提示 404 或接口不存在，请在浏览器开发者工具 Network 中点击签到，
+# 复制新增请求的 Copy as cURL 发给我，我再把 CHECKIN_PATH 改成真实接口。
 
 name: "HDHaven 签到"
-description: "hdhaven.com Cookie 捕获 + 签到接口探测"
-author: "Szt416"
-icon: ""
+description: "hdhaven.com 自动捕获 Cookie 并每日签到"
+author: "Codex"
+homepage: "https://hdhaven.com/"
+icon: "checkmark.seal.fill"
+open_url: "https://hdhaven.com/"
 
 compat_arguments:
-  MINUTE: "10"
-  HOUR: "00"
+  MINUTE: "16"
+  HOUR: "08"
   ENABLE_CAPTURE: "false"
+  CHECKIN_PATH: "/api/check-in"
 
 compat_arguments_desc: |
-  MINUTE=签到分钟（默认 10）
-  HOUR=签到小时（默认 00）
-  ENABLE_CAPTURE=Cookie 捕获（true 开 / false 关）
+  MINUTE=签到分钟，默认 16
+  HOUR=签到小时，默认 08
+  ENABLE_CAPTURE=Cookie 捕获开关，true 开 / false 关
+  CHECKIN_PATH=签到接口路径，默认 /api/check-in
 
 env_schema:
   ENABLE_CAPTURE:
-    name: Cookie
-    description: 默认关闭；开启后登录 hdhaven.com 并访问首页保存 Cookie，成功后请关闭
+    name: "Cookie 捕获"
+    description: "默认关闭；开启后登录 hdhaven.com 并访问首页，保存成功后请关闭"
     default_value: "false"
     options:
       - "false"
       - "true"
+  CHECKIN_PATH:
+    name: "签到路径"
+    description: "默认 /api/check-in；若抓包发现不同接口，在这里填写路径"
+    default_value: "/api/check-in"
 
 mitm:
   hostnames:
-    - hdhaven.com
+    - "hdhaven.com"
 
 scriptings:
   - http_response:
       name: "HDHaven Cookie"
-      match: "^https://hdhaven\\.com/(?:\\?.*)?$"
+      match: "^https://hdhaven\\.com/(?:$|\\?|api/)"
       script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHaven/HDHaven_Signin.js"
       body_required: false
       timeout: 30
@@ -44,7 +61,8 @@ scriptings:
   - schedule:
       name: "HDHaven 签到"
       cron: "{{{MINUTE}}} {{{HOUR}}} * * *"
-      timeout: 90
+      timeout: 60
       script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/HDHaven/HDHaven_Signin.js"
       env:
         MODE: "checkin"
+        CHECKIN_PATH: "{{{CHECKIN_PATH}}}"
