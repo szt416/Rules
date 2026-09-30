@@ -1,0 +1,34 @@
+name: "Fengchao Auto Check-in"
+description: "Daily scheduled check-in for fengchao.chat via /api/check-in?month=YYYY-MM."
+author: "Codex"
+homepage: "https://fengchao.chat/"
+icon: "checkmark.seal.fill"
+open_url: "https://fengchao.chat/"
+
+env_schema:
+  COOKIE:
+    name: "Cookie"
+    description: "Full Cookie header copied from a logged-in fengchao.chat request."
+    default_value: ""
+  CHECKIN_BASE:
+    name: "Check-in Base"
+    description: "Site origin. Keep default unless the domain changes."
+    default_value: "https://fengchao.chat"
+  CHECKIN_PATH:
+    name: "Check-in Path"
+    description: "The button request path. The script appends ?month=YYYY-MM."
+    default_value: "/api/check-in"
+  NOTIFY:
+    name: "Notify"
+    description: "Send execution result notification."
+    default_value: "true"
+    options:
+      - "true"
+      - "false"
+
+scriptings:
+  - schedule:
+      name: "Fengchao Auto Check-in"
+      cron: "13 8 * * *"
+      script_url: "fengchao-checkin.js"
+      timeout: 30
