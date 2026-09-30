@@ -30,5 +30,5 @@ scriptings:
   - schedule:
       name: "Fengchao Auto Check-in"
       cron: "13 8 * * *"
-      script_url: "fengchao-checkin.js"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/FengChao/FengChao_Signin.js"
       timeout: 30
