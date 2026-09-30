@@ -102,6 +102,25 @@ function parseMessage(text, status) {
 
   try {
     const data = JSON.parse(text);
+    if (data && data.code === 0 && data.data && typeof data.data === 'object') {
+      const info = data.data;
+      const pointName = info.pointName || '积分';
+      const reward = info.checkInReward;
+      const currentStreak = info.currentStreak;
+      const maxStreak = info.maxStreak;
+      const month = info.month;
+
+      return [
+        '签到成功',
+        month ? `月份：${month}` : '',
+        reward !== undefined && reward !== null ? `奖励：${reward} ${pointName}` : '',
+        currentStreak !== undefined && currentStreak !== null ? `当前连续：${currentStreak} 天` : '',
+        maxStreak !== undefined && maxStreak !== null ? `最高连续：${maxStreak} 天` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
     const message = data.message || data.msg || data.error || data.reason;
     if (message) return String(message).slice(0, 220);
     return JSON.stringify(data).slice(0, 220);
@@ -198,7 +217,7 @@ async function doCheckIn(ctx) {
     const message = parseMessage(text, status);
 
     log(`HTTP ${status}`);
-    log(`响应: ${String(text || '').slice(0, 500)}`);
+    log(`结果: ${message.replace(/\n/g, '；')}`);
 
     if (status === 401 || status === 403 || textIncludesAny(text, [
       'login - fengchao',
