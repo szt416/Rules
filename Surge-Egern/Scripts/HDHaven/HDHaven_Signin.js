@@ -153,6 +153,17 @@ async function captureCookie(ctx) {
   }
 
   const headers = (ctx.request && ctx.request.headers) || {};
+  const requestUrl = String((ctx.request && ctx.request.url) || '');
+  if (/^https:\/\/hdhaven\.com\/api\//i.test(requestUrl)) {
+    try {
+      const parsed = new URL(requestUrl);
+      log(`发现 API 请求: ${parsed.pathname}${parsed.search}`);
+      await notify(ctx, '发现 API 请求', `${parsed.pathname}${parsed.search}`);
+    } catch {
+      log(`发现 API 请求: ${requestUrl}`);
+    }
+  }
+
   const cookie = String(getHeader(headers, 'cookie') || '').trim();
 
   if (!cookie) {
