@@ -3,7 +3,7 @@
 #
 # 使用方法：
 # 1. 打开模块中的「Cookie」
-# 2. Safari 登录 https://invites.fun/
+# 2. 浏览器登录 https://invites.fun/
 # 3. 登录后访问网站首页
 # 4. 收到“Cookie 获取成功”通知后关闭「Cookie」
 # 5. 可在 Egern 脚本页面手动执行「药丸签到」测试
@@ -11,7 +11,7 @@
 name: "药丸签到"
 description: "invites.fun 每日自动签到"
 author: "Szt416"
-icon: ""
+icon: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/Invites.png"
 
 compat_arguments:
   MINUTE: "10"
