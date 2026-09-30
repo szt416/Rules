@@ -1,34 +1,57 @@
-name: "Fengchao Auto Check-in"
-description: "Daily scheduled check-in for fengchao.chat via /api/check-in?month=YYYY-MM."
+# Fengchao — Cookie capture + scheduled check-in
+#
+# Usage:
+# 1. Turn on the module setting "Cookie Capture"
+# 2. Log in to https://fengchao.chat/ in a browser routed through Egern
+# 3. Visit the site homepage
+# 4. After receiving the saved-cookie notification, turn "Cookie Capture" off
+# 5. Run "Fengchao Check-in" manually once in Egern scripts to test
+
+name: "Fengchao Check-in"
+description: "fengchao.chat cookie capture and daily check-in"
 author: "Codex"
 homepage: "https://fengchao.chat/"
 icon: "checkmark.seal.fill"
 open_url: "https://fengchao.chat/"
 
+compat_arguments:
+  MINUTE: "13"
+  HOUR: "08"
+  ENABLE_CAPTURE: "false"
+
+compat_arguments_desc: |
+  MINUTE=check-in minute, default 13
+  HOUR=check-in hour, default 08
+  ENABLE_CAPTURE=Cookie capture switch, true or false
+
 env_schema:
-  COOKIE:
-    name: "Cookie"
-    description: "Full Cookie header copied from a logged-in fengchao.chat request."
-    default_value: ""
-  CHECKIN_BASE:
-    name: "Check-in Base"
-    description: "Site origin. Keep default unless the domain changes."
-    default_value: "https://fengchao.chat"
-  CHECKIN_PATH:
-    name: "Check-in Path"
-    description: "The button request path. The script appends ?month=YYYY-MM."
-    default_value: "/api/check-in"
-  NOTIFY:
-    name: "Notify"
-    description: "Send execution result notification."
-    default_value: "true"
+  ENABLE_CAPTURE:
+    name: "Cookie Capture"
+    description: "Default off. Turn on, log in to fengchao.chat, visit homepage, then turn off after Cookie is saved."
+    default_value: "false"
     options:
-      - "true"
       - "false"
+      - "true"
+
+mitm:
+  hostnames:
+    - "fengchao.chat"
 
 scriptings:
-  - schedule:
-      name: "Fengchao Auto Check-in"
-      cron: "13 8 * * *"
-      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/FengChao/FengChao_Signin.js"
+  - http_response:
+      name: "Fengchao Cookie"
+      match: "^https://fengchao\\.chat/(?:$|\\?|api/check-in\\?)"
+      script_url: "fengchao-checkin.js"
+      body_required: false
       timeout: 30
+      max_size: 1048576
+      env:
+        ENABLE_CAPTURE: "{{{ENABLE_CAPTURE}}}"
+
+  - schedule:
+      name: "Fengchao Check-in"
+      cron: "{{{MINUTE}}} {{{HOUR}}} * * *"
+      timeout: 60
+      script_url: "fengchao-checkin.js"
+      env:
+        MODE: "checkin"
