@@ -1,4 +1,4 @@
-const SCRIPT_NAME = 'Fengchao Check-in';
+const SCRIPT_NAME = '蜂巢签到';
 const STORE_KEY = 'fengchao_cookie';
 const BASE_URL = 'https://fengchao.chat';
 const CHECKIN_PATH = '/api/check-in';
@@ -135,14 +135,14 @@ async function notify(ctx, subtitle, body) {
       sound: true,
     });
   } catch (error) {
-    log(`notify failed: ${error && error.message ? error.message : error}`);
+    log(`通知失败: ${error && error.message ? error.message : error}`);
   }
 }
 
 async function captureCookie(ctx) {
   const env = (ctx && ctx.env) || {};
   if (!envTrue(env, 'ENABLE_CAPTURE')) {
-    log('Cookie capture is disabled');
+    log('Cookie 捕获开关已关闭，跳过');
     return { response: ctx.response };
   }
 
@@ -150,19 +150,19 @@ async function captureCookie(ctx) {
   const cookie = String(getHeader(headers, 'cookie') || '').trim();
 
   if (!cookie) {
-    await notify(ctx, 'Cookie capture failed', 'No Cookie header found. Make sure you are logged in.');
+    await notify(ctx, 'Cookie 获取失败', '请求里没有 Cookie，请确认已经登录蜂巢。');
     return { response: ctx.response };
   }
 
   await ctx.storage.set(STORE_KEY, cookie);
-  await notify(ctx, 'Cookie saved', 'Cookie has been saved. Turn Cookie Capture off now.');
+  await notify(ctx, 'Cookie 保存成功', '已保存登录 Cookie，请关闭模块里的「Cookie 捕获」。');
   return { response: ctx.response };
 }
 
 async function doCheckIn(ctx) {
   let cookie = String((await ctx.storage.get(STORE_KEY)) || '').trim();
   if (!cookie) {
-    await notify(ctx, 'Missing Cookie', 'Turn Cookie Capture on, log in, and visit fengchao.chat first.');
+    await notify(ctx, '缺少 Cookie', '请先打开「Cookie 捕获」，登录蜂巢并访问一次首页。');
     return;
   }
 
@@ -190,7 +190,7 @@ async function doCheckIn(ctx) {
     if (mergedCookie && mergedCookie !== cookie) {
       cookie = mergedCookie;
       await ctx.storage.set(STORE_KEY, cookie);
-      log('Cookie updated from Set-Cookie');
+      log('已合并并更新服务器返回的 Cookie');
     }
 
     const status = response.status || 0;
@@ -198,38 +198,38 @@ async function doCheckIn(ctx) {
     const message = parseMessage(text, status);
 
     log(`HTTP ${status}`);
-    log(`Response: ${String(text || '').slice(0, 500)}`);
+    log(`响应: ${String(text || '').slice(0, 500)}`);
 
     if (status === 401 || status === 403 || textIncludesAny(text, [
       'login - fengchao',
-      '\u767b\u5f55 - \u8702\u5de2',
-      '\u8f93\u5165\u90ae\u7bb1',
+      '登录 - 蜂巢',
+      '输入邮箱',
     ])) {
-      await notify(ctx, 'Cookie expired', 'Please capture a fresh Cookie.');
+      await notify(ctx, 'Cookie 已失效', '请重新打开「Cookie 捕获」并访问蜂巢首页。');
       return;
     }
 
     if (textIncludesAny(text, [
       'already checked',
       'already signed',
-      '\u5df2\u7b7e\u5230',
-      '\u4eca\u65e5\u5df2\u7b7e\u5230',
-      '\u5df2\u7ecf\u7b7e\u5230',
+      '已签到',
+      '今日已签到',
+      '已经签到',
     ])) {
-      await notify(ctx, 'Already checked in', message);
+      await notify(ctx, '今日已签到', message || '无需重复签到。');
       return;
     }
 
     if (!(status >= 200 && status < 300)) {
-      await notify(ctx, 'Check-in failed', `${status}: ${message}`);
+      await notify(ctx, '签到失败', `${status}: ${message}`);
       return;
     }
 
-    await notify(ctx, 'Check-in done', message);
+    await notify(ctx, '签到完成', message);
   } catch (error) {
     const message = error && error.message ? error.message : String(error);
-    log(`Error: ${message}`);
-    await notify(ctx, 'Runtime error', message.slice(0, 200));
+    log(`异常: ${message}`);
+    await notify(ctx, '运行异常', message.slice(0, 200));
   }
 }
 
