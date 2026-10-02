@@ -8,11 +8,13 @@ compat_arguments:
   MINUTE: "10"
   HOUR: "8"
   BASE_URL: "https://laowang.vip"
+  FORMHASH: "44e9d846"
 
 compat_arguments_desc: |
   MINUTE=脚本启动分钟
   HOUR=脚本启动小时
   BASE_URL=论坛地址，默认 https://laowang.vip
+  FORMHASH=签到接口使用的 formhash，默认 44e9d846
 
 env_schema:
   ENABLE_CAPTURE:
@@ -31,7 +33,7 @@ env_schema:
 scriptings:
   - http_request:
       name: "老王论坛 Cookie 获取"
-      match: "^https://laowang\\.vip/(?:sign\\.php|forum\\.php|home\\.php)(?:\\?.*)?$"
+      match: "^https://laowang\\.vip/.*$"
       script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/LaoWang/LaoWang_Signin.js"
       body_required: false
       timeout: 30
@@ -43,6 +45,8 @@ scriptings:
       timeout: 60
       env:
         BASE_URL: "{{{BASE_URL}}}"
+        FORMHASH: "{{{FORMHASH}}}"
+
 mitm:
   hostnames:
     includes:
