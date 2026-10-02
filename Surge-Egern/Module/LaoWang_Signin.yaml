@@ -43,3 +43,7 @@ scriptings:
       timeout: 60
       env:
         BASE_URL: "{{{BASE_URL}}}"
+mitm:
+  hostnames:
+    includes:
+      - "laowang.vip"
