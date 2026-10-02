@@ -1,0 +1,45 @@
+name: "老王论坛签到"
+description: "老王论坛自动签到，支持 Cookie 配置、签到结果通知及自定义执行时间。"
+author: "OpenAI"
+homepage: "https://laowang.vip"
+icon: "https://laowang.vip/template/laowang/deancss/logo.png"
+
+compat_arguments:
+  MINUTE: "10"
+  HOUR: "8"
+  BASE_URL: "https://laowang.vip"
+
+compat_arguments_desc: |
+  MINUTE=脚本启动分钟
+  HOUR=脚本启动小时
+  BASE_URL=论坛地址，默认 https://laowang.vip
+
+env_schema:
+  ENABLE_CAPTURE:
+    name: "Cookie 自动抓取"
+    description: "开启后登录老王论坛并访问签到页，脚本会自动保存 Cookie；保存成功后建议关闭。"
+    default_value: "true"
+    options:
+      - "true"
+      - "false"
+
+  COOKIE:
+    name: "老王论坛 Cookie"
+    description: "可选。手动填写完整 Cookie；留空时优先使用脚本自动抓取并保存的 Cookie。"
+    default_value: ""
+
+scriptings:
+  - http_request:
+      name: "老王论坛 Cookie 获取"
+      match: "^https://laowang\\.vip/(?:sign\\.php|forum\\.php|home\\.php)(?:\\?.*)?$"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/LaoWang/LaoWang_Signin.js"
+      body_required: false
+      timeout: 30
+
+  - schedule:
+      name: "老王论坛自动签到"
+      cron: "{{{MINUTE}}} {{{HOUR}}} * * *"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/LaoWang/LaoWang_Signin.js"
+      timeout: 60
+      env:
+        BASE_URL: "{{{BASE_URL}}}"
