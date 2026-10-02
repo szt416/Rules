@@ -18,7 +18,7 @@ env_schema:
   ENABLE_CAPTURE:
     name: "Cookie 自动抓取"
     description: "开启后登录老王论坛并访问签到页，脚本会自动保存 Cookie；保存成功后建议关闭。"
-    default_value: "true"
+    default_value: "false"
     options:
       - "true"
       - "false"
