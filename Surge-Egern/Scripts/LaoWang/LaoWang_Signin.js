@@ -11,12 +11,19 @@ export default async function (ctx) {
   const baseURL = (ctx.env.BASE_URL || 'https://laowang.vip').replace(/\/+$/, '');
   const manualCookie = (ctx.env.COOKIE || '').trim();
   const captureEnabled = ctx.env.ENABLE_CAPTURE !== 'false';
+  const formhash = (ctx.env.FORMHASH || '44e9d846').trim();
 
   // Request script: capture the logged-in browser Cookie and keep it in Egern storage.
   if (ctx.request) {
-    if (!captureEnabled) return;
+    if (!captureEnabled) {
+      console.log('[老王签到] Cookie 抓取开关已关闭');
+      return;
+    }
 
     const requestCookie = ctx.request.headers.get('cookie');
+    console.log(
+      `[老王签到] 捕获请求: ${ctx.request.url || 'unknown'}, Cookie: ${requestCookie ? 'present' : 'missing'}`
+    );
     if (requestCookie && requestCookie.includes('=') && requestCookie.length > 20) {
       const previousCookie = ctx.storage.get('laowang_cookie') || '';
       ctx.storage.set('laowang_cookie', requestCookie);
@@ -28,6 +35,8 @@ export default async function (ctx) {
           sound: false,
         });
       }
+    } else if (!requestCookie) {
+      console.log('[老王签到] 当前请求没有 Cookie，跳过保存');
     }
     return;
   }
@@ -52,43 +61,18 @@ export default async function (ctx) {
   };
 
   try {
-    const page = await ctx.http.get(`${baseURL}/sign.php`, {
-      headers,
-      timeout: 30000,
-      credentials: 'include',
-    });
-    const pageBody = await page.text();
-
-    if (page.status >= 300 && page.status < 400) {
-      throw new Error(`签到页重定向（HTTP ${page.status}），Cookie 可能已失效`);
-    }
-    if (/请\s*先\s*登录|登录后使用|action=login/i.test(pageBody)) {
-      ctx.storage.delete('laowang_cookie');
-      throw new Error('登录状态失效，请重新复制 Cookie');
-    }
-
-    // Discuz 页面通常以隐藏 input 提供 formhash，也兼容单引号和无引号写法。
-    const formhashMatch = pageBody.match(
-      /name\s*=\s*["']formhash["'][^>]*value\s*=\s*["']([^"']+)["']/i
-    ) || pageBody.match(
-      /value\s*=\s*["']([^"']+)["'][^>]*name\s*=\s*["']formhash["']/i
-    );
-
-    if (!formhashMatch) {
-      throw new Error('未找到 formhash，页面结构可能已变化或 Cookie 无效');
-    }
-
-    const formhash = encodeURIComponent(formhashMatch[1]);
+    // 老王论坛现有脚本使用固定 formhash 直接请求签到接口；
+    // 页面本身不稳定地暴露 formhash，不能依赖 HTML 提取。
     const signURL =
-      `${baseURL}/plugin.php?id=k_misign%3Asign` +
-      `&operation=qiandao&formhash=${formhash}` +
+      `${baseURL}/plugin.php?id=k_misign:sign` +
+      `&operation=qiandao&formhash=${encodeURIComponent(formhash)}` +
       '&format=empty&inajax=1&ajaxtarget=JD_sign';
 
     const sign = await ctx.http.get(signURL, {
       headers: {
         ...headers,
         Accept: '*/*',
-        Referer: `${baseURL}/sign.php`,
+        Referer: `${baseURL}/plugin.php?id=k_misign:sign`,
         'X-Requested-With': 'XMLHttpRequest',
       },
       timeout: 30000,
@@ -97,11 +81,19 @@ export default async function (ctx) {
     const rawResult = await sign.text();
     const result = rawResult.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
+    if (sign.status >= 300 && sign.status < 400) {
+      throw new Error(`签到请求重定向（HTTP ${sign.status}），Cookie 可能已失效`);
+    }
+    if (/请\s*先\s*登录|登录后使用|action=login/i.test(rawResult)) {
+      ctx.storage.delete('laowang_cookie');
+      throw new Error('登录状态失效，请重新复制 Cookie');
+    }
+    if (/验证页面|点击进行验证|tncode|v2_captcha_form|slide_block/i.test(rawResult)) {
+      throw new Error('签到请求已到达验证码页面，需要在浏览器中完成 TnCode 滑块验证');
+    }
+
     if (sign.status !== 200) {
       throw new Error(`签到请求失败（HTTP ${sign.status}）`);
-    }
-    if (/验证页面|点击进行验证|tncode|v2_captcha_form/i.test(rawResult)) {
-      throw new Error('站点要求点击验证码，Egern 原生定时脚本无法自动完成，请手动打开签到页验证');
     }
 
     if (/已签到|今天已经签到|今日已签到|重复签到/i.test(result)) {
