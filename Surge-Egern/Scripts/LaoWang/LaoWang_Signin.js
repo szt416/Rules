@@ -9,13 +9,36 @@
  */
 export default async function (ctx) {
   const baseURL = (ctx.env.BASE_URL || 'https://laowang.vip').replace(/\/+$/, '');
-  const cookie = (ctx.env.COOKIE || '').trim();
+  const manualCookie = (ctx.env.COOKIE || '').trim();
+  const captureEnabled = ctx.env.ENABLE_CAPTURE !== 'false';
+
+  // Request script: capture the logged-in browser Cookie and keep it in Egern storage.
+  if (ctx.request) {
+    if (!captureEnabled) return;
+
+    const requestCookie = ctx.request.headers.get('cookie');
+    if (requestCookie && requestCookie.includes('=') && requestCookie.length > 20) {
+      const previousCookie = ctx.storage.get('laowang_cookie') || '';
+      ctx.storage.set('laowang_cookie', requestCookie);
+      if (previousCookie !== requestCookie) {
+        ctx.notify({
+          title: '老王论坛',
+          subtitle: 'Cookie 已自动保存',
+          body: '已捕获登录 Cookie，可以关闭 Cookie 抓取开关。',
+          sound: false,
+        });
+      }
+    }
+    return;
+  }
+
+  const cookie = manualCookie || (ctx.storage.get('laowang_cookie') || '').trim();
 
   if (!cookie) {
     ctx.notify({
       title: '老王论坛签到',
       subtitle: '配置错误',
-      body: '未设置 COOKIE，请在 Egern 模块环境变量中填入登录 Cookie。',
+      body: '未捕获到 Cookie，请先登录论坛并访问签到页，或手动填写 COOKIE。',
     });
     return;
   }
@@ -40,6 +63,7 @@ export default async function (ctx) {
       throw new Error(`签到页重定向（HTTP ${page.status}），Cookie 可能已失效`);
     }
     if (/请\s*先\s*登录|登录后使用|action=login/i.test(pageBody)) {
+      ctx.storage.delete('laowang_cookie');
       throw new Error('登录状态失效，请重新复制 Cookie');
     }
 
