@@ -34,9 +34,9 @@ function text(t, size, color, extra = {}) {
 
 async function request(ctx, path, options = {}) {
   const method = String(options.method || 'GET').toLowerCase();
-  const client = ctx.http && ctx.http[method];
-  if (typeof client !== 'function') throw new Error('当前 Egern 版本不支持 ctx.http');
-  const r = await client(`${BASE}${path}`, {
+  if (!ctx.http || typeof ctx.http[method] !== 'function') throw new Error('当前 Egern 版本不支持 ctx.http');
+  // 不提取方法引用；Egern 的原生桥接方法需要保留 ctx.http 作为调用者。
+  const r = await ctx.http[method](`${BASE}${path}`, {
     headers: options.headers || {},
     body: options.body,
     timeout: 18000,
