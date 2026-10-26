@@ -1,0 +1,22 @@
+# Shlii 原生小组件（Egern）
+# 将本文件与 shlii-widget.js 放在 Egern 可访问的同一位置后导入。
+scriptings:
+  - generic:
+      name: "shlii-widget-script"
+      script_url: "shlii-widget.js"
+      timeout: 20
+      env:
+        # 在 Egern 的脚本/小组件 Env 中填写；不要把真实值发布到公开配置。
+        SHLII_USERNAME: ""
+        SHLII_PASSWORD: ""
+        # 首次登录若触发邮箱设备验证：先让小组件发送邮件，再将邮件中的一次性码填这里并刷新。
+        # 验证完成后建议清空该项；后续优先使用刷新会话。
+        SHLII_EMAIL_CODE: ""
+        # 可选：短期 Access Token。填写后不会使用账号密码；令牌过期后需手动更新。
+        SHLII_ACCESS_TOKEN: ""
+        # 如启用了两步验证，再填写该项（可留空）。
+        SHLII_TOTP: ""
+
+widgets:
+  - name: "Shlii 服务器"
+    script_name: "shlii-widget-script"
