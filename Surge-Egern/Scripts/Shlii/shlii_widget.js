@@ -70,7 +70,7 @@ export default async function(ctx) {
     // 若 Egern 保留了 Shlii 的刷新 Cookie，优先复用它，避免每次刷新都触发邮箱验证。
     if (!token) {
       try {
-        const refreshed = await request(ctx, '/auth/refresh', { method: 'POST', headers, body: JSON.stringify({ device: 'Egern-Shlii-Widget' }) });
+        const refreshed = await request(ctx, '/auth/refresh', { method: 'POST', headers, body: { device: 'Egern-Shlii-Widget' } });
         token = refreshed.token;
       } catch (_) { /* 首次运行或 Cookie 失效时，走一次登录 */ }
     }
@@ -78,14 +78,14 @@ export default async function(ctx) {
       try {
         const login = await request(ctx, '/auth/login', {
           method: 'POST', headers,
-          body: JSON.stringify({ username, password, totpCode: env.SHLII_TOTP || undefined, device: 'Egern-Shlii-Widget', deviceVerificationCode: env.SHLII_EMAIL_CODE || undefined, deviceVerificationMethod: env.SHLII_EMAIL_CODE ? 'email' : undefined })
+          body: { username, password, totpCode: env.SHLII_TOTP || undefined, device: 'Egern-Shlii-Widget', deviceVerificationCode: env.SHLII_EMAIL_CODE || undefined, deviceVerificationMethod: env.SHLII_EMAIL_CODE ? 'email' : undefined }
         });
         token = login.token;
       } catch (e) {
         // 首次遇到新设备验证时，请求 Shlii 发送验证码；用户把邮件中的码填入 SHLII_EMAIL_CODE 后刷新小组件即可。
         const challenge = e.details && (e.details.challengeToken || e.details.challenge_token);
         if (challenge && !env.SHLII_EMAIL_CODE) {
-          await request(ctx, '/auth/login-device-challenge', { method: 'POST', headers, body: JSON.stringify({ challengeToken: challenge, deviceVerificationMethod: 'email', device: 'Egern-Shlii-Widget' }) });
+          await request(ctx, '/auth/login-device-challenge', { method: 'POST', headers, body: { challengeToken: challenge, deviceVerificationMethod: 'email', device: 'Egern-Shlii-Widget' } });
           throw new Error('已发送邮箱验证码：填入 SHLII_EMAIL_CODE 后重新刷新小组件');
         }
         throw e;
