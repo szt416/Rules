@@ -70,32 +70,18 @@ export default async function(ctx) {
   }
   try {
     const headers = { 'Content-Type': 'application/json', 'Accept-Language': 'zh-CN' };
-    let token = savedToken;
-    // 若 Egern 保留了 Shlii 的刷新 Cookie，优先复用它，避免每次刷新都触发邮箱验证。
+    // 登录成功后把短期访问令牌保存在 Egern 本地存储，避免每次小组件刷新都重新登录。
+    // Env 里手动提供的 Token 优先级最高。
+    let token = savedToken || await ctx.storage.get('shlii_widget_access_token');
     if (!token) {
-      try {
-        const refreshed = await request(ctx, '/auth/refresh', { method: 'POST', headers, body: { device: 'Egern-Shlii-Widget' } });
-        token = refreshed.token;
-      } catch (_) { /* 首次运行或 Cookie 失效时，走一次登录 */ }
+      const login = await request(ctx, '/auth/login', {
+        method: 'POST', headers,
+        body: { username, password, totpCode: env.SHLII_TOTP || undefined, device: 'Egern-Shlii-Widget' }
+      });
+      token = login.token;
+      if (!token) throw new Error('登录接口未返回 token');
+      await ctx.storage.set('shlii_widget_access_token', token);
     }
-    if (!token) {
-      try {
-        const login = await request(ctx, '/auth/login', {
-          method: 'POST', headers,
-          body: { username, password, totpCode: env.SHLII_TOTP || undefined, device: 'Egern-Shlii-Widget', deviceVerificationCode: env.SHLII_EMAIL_CODE || undefined, deviceVerificationMethod: env.SHLII_EMAIL_CODE ? 'email' : undefined }
-        });
-        token = login.token;
-      } catch (e) {
-        // 首次遇到新设备验证时，请求 Shlii 发送验证码；用户把邮件中的码填入 SHLII_EMAIL_CODE 后刷新小组件即可。
-        const challenge = e.details && (e.details.challengeToken || e.details.challenge_token);
-        if (challenge && !env.SHLII_EMAIL_CODE) {
-          await request(ctx, '/auth/login-device-challenge', { method: 'POST', headers, body: { challengeToken: challenge, deviceVerificationMethod: 'email', device: 'Egern-Shlii-Widget' } });
-          throw new Error('已发送邮箱验证码：填入 SHLII_EMAIL_CODE 后重新刷新小组件');
-        }
-        throw e;
-      }
-    }
-    if (!token) throw new Error('登录接口未返回 token');
     const data = await request(ctx, '/instances?page=1&pageSize=30&search=', {
       headers: { Authorization: `Bearer ${token}`, 'Accept-Language': 'zh-CN' }
     });
