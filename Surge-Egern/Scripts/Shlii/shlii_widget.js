@@ -35,13 +35,17 @@ function text(t, size, color, extra = {}) {
 async function request(ctx, path, options = {}) {
   const method = String(options.method || 'GET').toLowerCase();
   if (!ctx.http || typeof ctx.http[method] !== 'function') throw new Error('当前 Egern 版本不支持 ctx.http');
-  // 不提取方法引用；Egern 的原生桥接方法需要保留 ctx.http 作为调用者。
-  const r = await ctx.http[method](`${BASE}${path}`, {
-    headers: options.headers || {},
-    body: options.body,
-    timeout: 18000,
-    credentials: 'include'
-  });
+  // Egern 的原生桥接对 options 要求严格：不要给 GET 传入 body: undefined。
+  const requestOptions = { headers: options.headers || {}, timeout: 18000, credentials: 'include' };
+  if (options.body !== undefined) requestOptions.body = options.body;
+  let r;
+  const url = `${BASE}${path}`;
+  if (method === 'get') r = await ctx.http.get(url, requestOptions);
+  else if (method === 'post') r = await ctx.http.post(url, requestOptions);
+  else if (method === 'put') r = await ctx.http.put(url, requestOptions);
+  else if (method === 'patch') r = await ctx.http.patch(url, requestOptions);
+  else if (method === 'delete') r = await ctx.http.delete(url, requestOptions);
+  else throw new Error(`不支持的 HTTP 方法：${method}`);
   let data;
   try { data = await r.json(); } catch (_) { data = {}; }
   if (r.status < 200 || r.status >= 300) {
