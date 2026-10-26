@@ -3,7 +3,7 @@
 scriptings:
   - generic:
       name: "shlii-widget-script"
-      script_url: "shlii-widget.js"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Shlii/shlii_widget.js"
       timeout: 20
       env:
         # 在 Egern 的脚本/小组件 Env 中填写；不要把真实值发布到公开配置。
