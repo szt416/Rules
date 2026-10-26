@@ -32,6 +32,16 @@ function text(t, size, color, extra = {}) {
   return { type: 'text', text: t, font: { size, ...extra.font }, textColor: color, maxLines: extra.maxLines || 1, minScale: 0.55, textAlign: extra.textAlign };
 }
 
+async function getDevice(ctx) {
+  // Shlii 登录接口要求 device 是对象，而不是普通字符串。
+  let deviceId = await ctx.storage.get('shlii_widget_device_id');
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(deviceId || '')) {
+    deviceId = 'b81e773d-d30c-4d05-9f15-6e24731f1a88';
+    await ctx.storage.set('shlii_widget_device_id', deviceId);
+  }
+  return { deviceId, fingerprint: null, screen: null, language: 'zh-CN', timezone: 'Asia/Shanghai', platform: 'iPhone', cpu: null, memory: null, canvas: null, webgl: null, audio: null, touch: 1, userAgent: 'Egern Shlii Widget' };
+}
+
 async function request(ctx, path, options = {}) {
   const method = String(options.method || 'GET').toLowerCase();
   if (!ctx.http || typeof ctx.http[method] !== 'function') throw new Error('当前 Egern 版本不支持 ctx.http');
@@ -76,7 +86,7 @@ export default async function(ctx) {
     if (!token) {
       const login = await request(ctx, '/auth/login', {
         method: 'POST', headers,
-        body: { username, password, totpCode: env.SHLII_TOTP || undefined, device: 'Egern-Shlii-Widget' }
+        body: { username, password, totpCode: env.SHLII_TOTP || undefined, device: await getDevice(ctx) }
       });
       token = login.token;
       if (!token) throw new Error('登录接口未返回 token');
