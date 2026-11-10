@@ -1,0 +1,31 @@
+name: "Telegram 重定向"
+description: "将公开/私有消息、话题、频道、邀请和手机号链接转到指定客户端。未支持的链接原样放行。"
+author: "Reukix（原脚本）；Minis（Egern 原生适配）"
+homepage: "https://github.com/Reukix/ukix"
+icon: "paperplane.fill"
+env_schema:
+  app:
+    name: "Telegram 客户端 Scheme"
+    description: "默认 tg（官方）。第三方客户端须支持相应 Telegram 深链动作。"
+    default_value: "tg"
+    options:
+      - tg
+      - sg
+      - turrit
+      - ime
+      - ng
+      - lingo
+      - rg
+scriptings:
+  - http_request:
+      name: "Telegram302"
+      match: '^https?://(?:t\.me|telegram\.me|telegram\.dog)(?::(?:80|443))?/'
+      # 本地文件路径；如 Egern 将脚本存放在其他目录，请改为实际路径。
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Telegram/Telegram302.js"
+      timeout: 5
+      body_required: false
+mitm:
+  hostnames:
+    - t.me
+    - telegram.me
+    - telegram.dog
