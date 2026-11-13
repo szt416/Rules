@@ -1,0 +1,10 @@
+#!name=Telegram 重定向
+#!desc=将公开/私有消息、话题、频道、邀请和手机号链接转到指定客户端；不支持的链接原样放行。需配套 Surge 版 Telegram302.js。
+#!arguments=app:tg
+#!arguments-desc=Telegram 客户端 Scheme：tg / sg / turrit / ime / ng / lingo / rg；默认 tg。第三方客户端需支持对应深链。
+
+[Script]
+Telegram302 = type=http-request, pattern=^https?://(?:t\.me|telegram\.me|telegram\.dog)(?::(?:80|443))?/, script-path=Telegram302.js, timeout=5, requires-body=false, argument=app={{app}}
+
+[MITM]
+hostname = %APPEND% t.me, telegram.me, telegram.dog
