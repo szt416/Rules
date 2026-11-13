@@ -1,10 +1,10 @@
-#!name=Telegram 重定向（Surge 响应版）
-#!desc=响应阶段 307 重定向，默认 Regram（rg）。需先上传配套 Surge 响应版脚本；请停用旧 Telegram 重定向模块。
-#!arguments=app:rg
-#!arguments-desc=客户端 Scheme：rg（Regram）、tg、sg、turrit、ime、ng、lingo。默认 rg。
+#!name=Telegram 跳转（IBL3ND Surge 适配）
+#!desc=基于 IBL3ND/module 的 Egern 版本，仅适配 Surge 接口。默认 Regram（regram://）。测试时请停用其他 Telegram 重定向模块。
+#!arguments=CLIENT:Regram
+#!arguments-desc=客户端名称：Telegram、Nagram、Swiftgram、Turrit、iMe、Nicegram、Lingogram、Regram。Telegram 表示放行原网页。
 
 [Script]
-Telegram302-Response = type=http-response, pattern=^https?://(?:t\.me|telegram\.me|telegram\.dog)(?::(?:80|443))?/, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Telegram/Telegram302(Surge).js?v=response307-1, timeout=5, requires-body=false, argument=app={{app}}
+Telegram-IBL3ND = type=http-request, pattern=^https?://(?:t\.me|telegram\.me)/.+, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Telegram/TgRedirect-IBL3ND-Surge.js?v=1, timeout=10, requires-body=false, argument=CLIENT={{CLIENT}}
 
 [MITM]
-hostname = %APPEND% t.me, telegram.me, telegram.dog
+hostname = %APPEND% t.me, telegram.me
