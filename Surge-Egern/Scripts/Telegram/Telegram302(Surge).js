@@ -1,5 +1,5 @@
 /**
- * Telegram302 — Surge native http-request script
+ * Telegram302 — Surge native http-response script; response-stage 307 adaptation
  *
  * 配套模块：Telegram302.sgmodule
  * $argument：app=tg（支持 tg / sg / turrit / ime / ng / lingo / rg）
@@ -15,7 +15,7 @@
     var rawArgument = typeof $argument === "string" ? $argument : "";
     var argument = rawArgument.replace(/^app=/, "");
     var app = argument.trim().toLowerCase().replace(/:(?:\/\/)?$/, "");
-    if (apps.indexOf(app) === -1) app = "tg";
+    if (apps.indexOf(app) === -1) app = "rg";
 
     // 特殊用途路径不能被当作普通用户名；未实现的类型交回原网页处理。
     var reserved = (
@@ -175,15 +175,14 @@
         var method = (request.method || "GET").toUpperCase();
         var target = method === "GET" || method === "HEAD" ? convert(request.url) : null;
         if (target) {
-            return $done({response: {
-                    status: 302,
+            return $done({
+                    status: 307,
                     headers: {
                         "Location": target,
                         "Cache-Control": "no-store",
                         "Pragma": "no-cache"
-                    },
-                    body: ""
-            }});
+                    }
+            });
         }
     } catch (error) {
         console.log("[Telegram302] 链接无法解析，已放行：" + error.message);
