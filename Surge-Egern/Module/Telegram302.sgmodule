@@ -4,7 +4,7 @@
 #!arguments-desc=Telegram 客户端 Scheme：tg / sg / turrit / ime / ng / lingo / rg；默认 tg。第三方客户端需支持对应深链。
 
 [Script]
-Telegram302 = type=http-request, pattern=^https?://(?:t\.me|telegram\.me|telegram\.dog)(?::(?:80|443))?/, script-path=Telegram302.js, timeout=5, requires-body=false, argument=app={{app}}
+Telegram302 = type=http-request, pattern=^https?://(?:t\.me|telegram\.me|telegram\.dog)(?::(?:80|443))?/, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Telegram/Telegram302(Surge).js, timeout=5, requires-body=false, argument=app={{app}}
 
 [MITM]
 hostname = %APPEND% t.me, telegram.me, telegram.dog
