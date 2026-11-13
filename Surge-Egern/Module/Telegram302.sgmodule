@@ -4,7 +4,7 @@
 #!arguments-desc=客户端名称：Telegram、Nagram、Swiftgram、Turrit、iMe、Nicegram、Lingogram、Regram。Telegram 表示放行原网页。
 
 [Script]
-Telegram-IBL3ND = type=http-request, pattern=^https?://(?:t\.me|telegram\.me)/.+, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Telegram/TgRedirect-IBL3ND-Surge.js?v=1, timeout=10, requires-body=false, argument=CLIENT={{CLIENT}}
+Telegram-IBL3ND = type=http-request, pattern=^https?://(?:t\.me|telegram\.me)/.+, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Telegram/Telegram302(Surge).js?v=1, timeout=10, requires-body=false, argument=CLIENT={{CLIENT}}
 
 [MITM]
 hostname = %APPEND% t.me, telegram.me
