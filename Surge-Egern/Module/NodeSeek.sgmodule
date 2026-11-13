@@ -4,8 +4,8 @@
 #!homepage=https://github.com/szt416/Rules
 
 [Script]
-NodeSeek Cookie 获取 = type=http-request,pattern=^https:\/\/www\.nodeseek\.com\/api\/account\/getInfo\/\d+(?:\?.*)?$,script-path=Szt16-NodeSeek.js,timeout=10
-NodeSeek 自动签到 = type=cron,cronexp="10 0 * * *",script-path=Szt16-NodeSeek.js,timeout=30,argument=random=true
+NodeSeek Cookie 获取 = type=http-request,pattern=^https:\/\/www\.nodeseek\.com\/api\/account\/getInfo\/\d+(?:\?.*)?$,script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js,timeout=10
+NodeSeek 自动签到 = type=cron,cronexp="10 0 * * *",script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js,timeout=30,argument=random=true
 
 [MITM]
 hostname = %APPEND% www.nodeseek.com
