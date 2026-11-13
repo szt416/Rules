@@ -176,7 +176,7 @@
         var target = method === "GET" || method === "HEAD" ? convert(request.url) : null;
         if (target) {
             return $done({response: {
-                    status: "HTTP/1.1 302 Found",
+                    status: 302,
                     headers: {
                         "Location": target,
                         "Cache-Control": "no-store",
