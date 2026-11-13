@@ -1,0 +1,11 @@
+#!name=NodeSeek签到
+#!desc=Surge 原生适配。访问自己的 NodeSeek 个人资料页保存本机 Cookie；每日 00:10 随机奖励签到。Cookie 不会同步到其他设备。
+#!author=本地适配，基于 Szt416 / Roddy-D 上游
+#!homepage=https://github.com/szt416/Rules
+
+[Script]
+NodeSeek Cookie 获取 = type=http-request,pattern=^https:\/\/www\.nodeseek\.com\/api\/account\/getInfo\/\d+(?:\?.*)?$,script-path=Szt16-NodeSeek.js,timeout=10
+NodeSeek 自动签到 = type=cron,cronexp="10 0 * * *",script-path=Szt16-NodeSeek.js,timeout=30,argument=random=true
+
+[MITM]
+hostname = %APPEND% www.nodeseek.com
