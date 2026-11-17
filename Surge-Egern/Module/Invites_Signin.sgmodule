@@ -1,0 +1,18 @@
+#!name=药丸签到（Surge）
+#!desc=invites.fun 每日自动签到。默认每天 00:10；ENABLE_CAPTURE 默认 false，改为 true 后登录并访问首页，收到保存成功通知后改回 false。需启用 MITM 并信任证书。请先将配套 Invites_Signin.js 放入 Surge 配置目录。
+#!author=Szt416（原作），Surge 适配
+#!icon=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/Invites.png
+#!arguments=MINUTE=10&HOUR=00&ENABLE_CAPTURE=false
+
+# 原模块：https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Module/Invites_Signin.yaml
+# 原脚本：https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Invites/Invites_Signin.js
+# MINUTE：签到分钟；HOUR：签到小时（设备本地时间）。
+# ENABLE_CAPTURE：true 开启 Cookie 捕获，false 关闭；无需手动填写 Cookie。
+# 配套 JS 也可自行托管，然后将下面两处 script-path 改为其直链。
+
+[Script]
+药丸 Cookie = type=http-response, pattern=^https://invites\.fun/(?:\?.*)?$, requires-body=false, max-size=1048576, timeout=30, script-path=Invites_Signin.js, argument=ENABLE_CAPTURE=%ENABLE_CAPTURE%
+药丸签到 = type=cron, cronexp="%MINUTE% %HOUR% * * *", timeout=60, script-path=Invites_Signin.js, argument=MODE=checkin
+
+[MITM]
+hostname = %APPEND% invites.fun
