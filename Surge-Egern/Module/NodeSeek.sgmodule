@@ -1,13 +1,13 @@
-#!name=NodeSeek签到
-#!desc=NodeSeek 自动签到，支持 Cookie 抓取、随机奖励、预计过期提醒及 Telegram 通知。直接使用远程 Surge 脚本。默认开启 Cookie 抓取，登录后访问 /board。抓取成功后关闭抓取开关。每天 00:10 签到。
+#!name=NodeSeek签到-抓取诊断版
+#!desc=NodeSeek 自动签到，支持 Cookie 抓取、随机奖励、预计过期提醒及 Telegram 通知。直接使用远程 Surge 脚本。固定开启抓取并记录调试日志。抓取成功后请停用 Cookie 获取脚本。每天 00:10 签到。
 #!author=Szt416（原作）；Surge 接口适配
 #!homepage=https://github.com/szt416
 #!icon=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/NodeSeek.png
-#!arguments=MINUTE:10,HOUR:0,ENABLE_CAPTURE:true,RANDOM_REWARD:true,TG_BOT_TOKEN:none,TG_USER_ID:none,TG_NOTIFY_ONLY_FAIL:false
-#!arguments-desc=MINUTE：分钟；HOUR：小时（设备本地时间）。ENABLE_CAPTURE：Cookie 抓取开关，默认 true，抓取成功后改回 false。RANDOM_REWARD：true 随机奖励，false 固定奖励。TG_BOT_TOKEN/TG_USER_ID：可选 Telegram 通知参数，不使用时保持 none。TG_NOTIFY_ONLY_FAIL：true 仅推送失败及过期提醒。
+#!arguments=MINUTE:10,HOUR:0,RANDOM_REWARD:true,TG_BOT_TOKEN:none,TG_USER_ID:none,TG_NOTIFY_ONLY_FAIL:false
+#!arguments-desc=MINUTE：分钟；HOUR：小时（设备本地时间）。RANDOM_REWARD：true 随机奖励，false 固定奖励。TG_BOT_TOKEN/TG_USER_ID：可选 Telegram 通知参数，不使用时保持 none。TG_NOTIFY_ONLY_FAIL：true 仅推送失败及过期提醒。
 
 [Script]
-NodeSeek Cookie 获取 = type=http-request, pattern=^https://(?:www\.)?nodeseek\.com/(?:board(?:[/?]|$)|api/account/getInfo/), script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js, requires-body=false, timeout=30, argument="ENABLE_CAPTURE={{{ENABLE_CAPTURE}}}"
+NodeSeek Cookie 获取 = type=http-request, pattern=^https://www\.nodeseek\.com/api/account/getInfo/, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js, requires-body=false, timeout=30, debug=true, script-update-interval=0, argument="ENABLE_CAPTURE=true"
 NodeSeek 自动签到 = type=cron, cronexp="{{{MINUTE}}} {{{HOUR}}} * * *", script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js, timeout=60, wake-system=1, argument="RANDOM_REWARD={{{RANDOM_REWARD}}}&TG_BOT_TOKEN={{{TG_BOT_TOKEN}}}&TG_USER_ID={{{TG_USER_ID}}}&TG_NOTIFY_ONLY_FAIL={{{TG_NOTIFY_ONLY_FAIL}}}"
 
 [MITM]
