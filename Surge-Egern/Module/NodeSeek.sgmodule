@@ -1,4 +1,4 @@
-#!name=NodeSeek签到-抓取诊断版
+#!name=NodeSeek签到
 #!desc=NodeSeek 自动签到，支持 Cookie 抓取、随机奖励、预计过期提醒及 Telegram 通知。直接使用远程 Surge 脚本。固定开启抓取并记录调试日志。抓取成功后请停用 Cookie 获取脚本。每天 00:10 签到。
 #!author=Szt416（原作）；Surge 接口适配
 #!homepage=https://github.com/szt416
