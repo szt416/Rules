@@ -11,8 +11,8 @@
 # 配套 JS 也可自行托管，然后将下面两处 script-path 改为其直链。
 
 [Script]
-药丸 Cookie = type=http-response, pattern=^https://invites\.fun/(?:\?.*)?$, requires-body=false, max-size=1048576, timeout=30, script-path=Invites_Signin.js, argument=ENABLE_CAPTURE=%ENABLE_CAPTURE%
-药丸签到 = type=cron, cronexp="%MINUTE% %HOUR% * * *", timeout=60, script-path=Invites_Signin.js, argument=MODE=checkin
+药丸 Cookie = type=http-response, pattern=^https://invites\.fun/(?:\?.*)?$, requires-body=false, max-size=1048576, timeout=30, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Invites/invites.js, argument=ENABLE_CAPTURE=%ENABLE_CAPTURE%
+药丸签到 = type=cron, cronexp="%MINUTE% %HOUR% * * *", timeout=60, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Invites/invites.js, argument=MODE=checkin
 
 [MITM]
 hostname = %APPEND% invites.fun
