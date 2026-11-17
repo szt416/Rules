@@ -1,11 +1,14 @@
 #!name=NodeSeek签到
-#!desc=Surge 原生适配。访问自己的 NodeSeek 个人资料页保存本机 Cookie；每日 00:10 随机奖励签到。Cookie 不会同步到其他设备。
-#!author=本地适配，基于 Szt416 / Roddy-D 上游
-#!homepage=https://github.com/szt416/Rules
+#!desc=NodeSeek 自动签到，支持 Cookie 抓取、随机奖励、预计过期提醒及 Telegram 通知。需将 NodeSeek_Surge.js 放在 Surge 配置目录。默认每天 00:10 签到。
+#!author=Szt416（原作）；Surge 接口适配
+#!homepage=https://github.com/szt416
+#!icon=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/NodeSeek.png
+#!arguments=MINUTE:10,HOUR:0,ENABLE_CAPTURE:false,NS_COOKIE:,RANDOM_REWARD:true,TG_BOT_TOKEN:,TG_USER_ID:,TG_NOTIFY_ONLY_FAIL:false
+#!arguments-desc=MINUTE：分钟；HOUR：小时（设备本地时间）。ENABLE_CAPTURE：Cookie 抓取开关，首次抓取时设为 true，成功后改回 false。NS_COOKIE：手动 Cookie，留空使用已抓取值（手动值不可含 & 或双引号）。RANDOM_REWARD：true 随机奖励，false 固定奖励。TG_BOT_TOKEN/TG_USER_ID：可选 Telegram 通知参数。TG_NOTIFY_ONLY_FAIL：true 仅推送失败及过期提醒。
 
 [Script]
-NodeSeek Cookie 获取 = type=http-request,pattern=^https:\/\/www\.nodeseek\.com\/api\/account\/getInfo\/\d+(?:\?.*)?$,script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js,timeout=10
-NodeSeek 自动签到 = type=cron,cronexp="10 0 * * *",script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js,timeout=30,argument=random=true
+NodeSeek Cookie 获取 = type=http-request, pattern=^https://www\.nodeseek\.com/api/account/getInfo/\d+\?readme=1$, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js, requires-body=false, timeout=30, argument="ENABLE_CAPTURE={{{ENABLE_CAPTURE}}}"
+NodeSeek 自动签到 = type=cron, cronexp="{{{MINUTE}}} {{{HOUR}}} * * *", script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js, timeout=60, wake-system=1, argument="NS_COOKIE={{{NS_COOKIE}}}&RANDOM_REWARD={{{RANDOM_REWARD}}}&TG_BOT_TOKEN={{{TG_BOT_TOKEN}}}&TG_USER_ID={{{TG_USER_ID}}}&TG_NOTIFY_ONLY_FAIL={{{TG_NOTIFY_ONLY_FAIL}}}"
 
 [MITM]
 hostname = %APPEND% www.nodeseek.com
