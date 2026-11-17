@@ -1,0 +1,124 @@
+# Source: https://raw.githubusercontent.com/Reukix/ukix/refs/heads/main/Script/Spotify.sgmodule
+name: "Spotify Premium（Egern）"
+description: "会员配置、首页与播放页去广告，歌词补全和双语翻译；由 Reukix Surge 模块转换，配套脚本已适配 Egern 原生 API。"
+homepage: "https://github.com/Reukix/ukix"
+compat_arguments:
+  Lyrics: "true"
+  Translate: "true"
+  TargetLanguage: "zh-CN"
+compat_arguments_desc: "Lyrics：歌词补全；Translate：歌词翻译；TargetLanguage：翻译语言。已有官方歌词优先保留，请停用其他 Spotify 歌词模块。"
+rules:
+  - and:
+      match:
+        - domain_suffix:
+            match: "spotify.com"
+        - protocol:
+            match: "quic"
+      policy: "REJECT"
+  - domain:
+      match: "aet.spotify.com"
+      policy: "REJECT"
+header_rewrites:
+  - delete:
+      match: "^https:\\/\\/(?:[A-Za-z0-9-]+-)?spclient(?:\\.wg)?\\.spotify\\.com(?::443)?\\/(?:user-customization-service\\/v1\\/customize|nebula\\/v1\\/configuration\\/attributes|remote-config-resolver\\/v3\\/configuration)\\/?(?:\\?[^#]*)?$"
+      name: "if-none-match"
+      type: "request"
+url_rewrites:
+  - match: "^https:\\/\\/(spclient\\.wg|.*-spclient)\\.spotify\\.com(:443)?\\/pendragon"
+    location: "http://reject/"
+  - match: "^https:\\/\\/.*-spclient\\.spotify\\.com(:443)?\\/pam-view-service\\/"
+    location: "http://reject/"
+  - match: "^https:\\/\\/.*37i9dQZF1EYkqdzj48dyYq"
+    location: "http://reject/"
+map_locals:
+  - match: "^https:\\/\\/(.*-spclient\\.spotify\\.com(:443)?|spclient\\.wg\\.spotify\\.com)\\/gabo-receiver-service"
+    status_code: 200
+    headers:
+      Cache-Control: "no-cache"
+      Content-Length: "0"
+    body: ""
+scriptings:
+  - http_response:
+      name: "spotify-home"
+      match: "^https:\\/\\/(?:[A-Za-z0-9-]+-)?spclient(?:\\.wg)?\\.spotify\\.com(?::443)?\\/casita\\/v1\\/home\\/default\\/?(?:\\?[^#]*)?$"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Spotify/New_Spotify.js"
+      body_required: true
+      binary_body: true
+      max_size: 2097152
+      timeout: 5
+      update_interval: 86400
+  - http_response:
+      name: "spotify-search"
+      match: "^https:\\/\\/(spclient\\.wg\\.spotify\\.com|.*-spclient\\.spotify\\.com(:443)?)\\/browsita\\/v.\\/browse"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Spotify/New_Spotify.js"
+      body_required: true
+      binary_body: true
+      max_size: 2097152
+      timeout: 5
+      update_interval: 86400
+  - http_response:
+      name: "spotify-scroll"
+      match: "^https:\\/\\/(?:[A-Za-z0-9-]+-)?spclient(?:\\.wg)?\\.spotify\\.com(?::443)?\\/scrollsita\\/v[0-9]+\\/scroll\\/spotify:[^?#]+(?:\\?[^#]*)?$"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Spotify/New_Spotify.js"
+      body_required: true
+      binary_body: true
+      max_size: 2097152
+      timeout: 8
+      update_interval: 86400
+      env:
+        Lyrics: "{{{Lyrics}}}"
+        Translate: "{{{Translate}}}"
+        TargetLanguage: "{{{TargetLanguage}}}"
+  - http_response:
+      name: "spotify-lyrics"
+      match: "^https:\\/\\/(?:[A-Za-z0-9-]+-)?spclient(?:\\.wg)?\\.spotify\\.com(?::443)?\\/color-lyrics\\/v2\\/track\\/[A-Za-z0-9]{22}(?:\\/image\\/[^/?#]+)?\\/?(?:\\?[^#]*)?$"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Spotify/New_Spotify.js"
+      body_required: true
+      binary_body: true
+      max_size: 2097152
+      timeout: 20
+      update_interval: 86400
+      env:
+        Lyrics: "{{{Lyrics}}}"
+        Translate: "{{{Translate}}}"
+        TargetLanguage: "{{{TargetLanguage}}}"
+  - http_response:
+      name: "spotify-lyrics-metadata"
+      match: "^https:\\/\\/(?:[A-Za-z0-9-]+-)?spclient(?:\\.wg)?\\.spotify\\.com(?::443)?\\/(?:extended-metadata\\/v0\\/extended-metadata|metadata\\/4\\/track\\/[a-fA-F0-9]{32})(?:\\?[^#]*)?$"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Spotify/New_Spotify.js"
+      body_required: true
+      binary_body: true
+      max_size: 2097152
+      timeout: 5
+      update_interval: 86400
+      env:
+        Lyrics: "{{{Lyrics}}}"
+        Translate: "{{{Translate}}}"
+        TargetLanguage: "{{{TargetLanguage}}}"
+  - http_response:
+      name: "spotify-lyrics-playback"
+      match: "^https:\\/\\/(?:[A-Za-z0-9-]+-)?spclient(?:\\.wg)?\\.spotify\\.com(?::443)?\\/connect-state\\/v1\\/devices\\/[^/?#]+\\/?(?:\\?[^#]*)?$"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Spotify/New_Spotify.js"
+      body_required: true
+      binary_body: true
+      max_size: 2097152
+      timeout: 5
+      update_interval: 86400
+      env:
+        Lyrics: "{{{Lyrics}}}"
+        Translate: "{{{Translate}}}"
+        TargetLanguage: "{{{TargetLanguage}}}"
+  - http_response:
+      name: "spotify-proto"
+      match: "^https:\\/\\/(?:[A-Za-z0-9-]+-)?spclient(?:\\.wg)?\\.spotify\\.com(?::443)?\\/(?:bootstrap\\/v1\\/bootstrap|user-customization-service\\/v1\\/customize|nebula\\/v1\\/configuration\\/attributes|remote-config-resolver\\/v3\\/configuration)\\/?(?:\\?[^#]*)?$"
+      script_url: "https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Spotify/New_Spotify.js"
+      body_required: true
+      binary_body: true
+      max_size: 2097152
+      timeout: 5
+      update_interval: 86400
+mitm:
+  hostnames:
+    - "spclient.wg.spotify.com"
+    - "*spclient.spotify.com"
+    - "*-spclient.wg.spotify.com"
