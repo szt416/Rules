@@ -9,8 +9,8 @@
 # 本地版：将本文件和 NodeSeek_Surge.js 放到 Surge 可读取的同一配置目录。
 # 如改用远程安装，请使用压缩包里的 remote/NodeSeek_Signin.sgmodule，并先上传 JS。
 [Script]
-NodeSeek Cookie 获取 = type=http-request, pattern=^https://www\.nodeseek\.com/api/account/getInfo/\d+\?[^#]*\breadme=1(?:&[^#]*)?$, requires-body=false, script-path=NodeSeek_Surge.js, timeout=20, argument="ENABLE_CAPTURE={{{ENABLE_CAPTURE}}}&TG_BOT_TOKEN={{{TG_BOT_TOKEN}}}&TG_USER_ID={{{TG_USER_ID}}}&TG_NOTIFY_ONLY_FAIL={{{TG_NOTIFY_ONLY_FAIL}}}"
-NodeSeek 自动签到 = type=cron, cronexp="{{{MINUTE}}} {{{HOUR}}} * * *", script-path=NodeSeek_Surge.js, timeout=60, wake-system=true, argument="RANDOM_REWARD={{{RANDOM_REWARD}}}&TG_BOT_TOKEN={{{TG_BOT_TOKEN}}}&TG_USER_ID={{{TG_USER_ID}}}&TG_NOTIFY_ONLY_FAIL={{{TG_NOTIFY_ONLY_FAIL}}}"
+NodeSeek Cookie 获取 = type=http-request, pattern=^https://www\.nodeseek\.com/api/account/getInfo/\d+\?[^#]*\breadme=1(?:&[^#]*)?$, requires-body=false, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js, timeout=20, argument="ENABLE_CAPTURE={{{ENABLE_CAPTURE}}}&TG_BOT_TOKEN={{{TG_BOT_TOKEN}}}&TG_USER_ID={{{TG_USER_ID}}}&TG_NOTIFY_ONLY_FAIL={{{TG_NOTIFY_ONLY_FAIL}}}"
+NodeSeek 自动签到 = type=cron, cronexp="{{{MINUTE}}} {{{HOUR}}} * * *", script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js, timeout=60, wake-system=true, argument="RANDOM_REWARD={{{RANDOM_REWARD}}}&TG_BOT_TOKEN={{{TG_BOT_TOKEN}}}&TG_USER_ID={{{TG_USER_ID}}}&TG_NOTIFY_ONLY_FAIL={{{TG_NOTIFY_ONLY_FAIL}}}"
 
 [MITM]
 hostname = %APPEND% www.nodeseek.com
