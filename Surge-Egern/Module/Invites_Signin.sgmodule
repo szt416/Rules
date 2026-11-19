@@ -1,4 +1,4 @@
-#!name=药丸签到（Surge）
+#!name=药丸签到
 #!desc=invites.fun 每日自动签到。默认每天 00:10；ENABLE_CAPTURE 默认 false，改为 true 后登录并访问首页，收到保存成功通知后改回 false。需启用 MITM 并信任证书。远程版：请先同步更新仓库 Scripts/Invites/invites.js，再更新本模块。
 #!author=Szt416（原作），Surge 适配
 #!icon=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/Invites.png
