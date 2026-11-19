@@ -1,0 +1,16 @@
+#!name=PingMe 签到与 Cookie 获取
+#!desc=PingMe 自动签到及 Cookie 获取模块，保留原版余额、签到、5次视频奖励和通知。先保持 Cookie 捕获开启并打开 PingMe，再关闭捕获。
+#!author=fmz200; Surge adaptation
+#!version=1.0.0-surge
+#!homepage=https://github.com/fmz200/wool_scripts
+#!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/PingMe.png
+#!arguments=DisablePingMeCookie:false,PingMeMorningCron:30 8 * * *,PingMeEveningCron:30 20 * * *,FetchTimeout:35
+#!arguments-desc=DisablePingMeCookie：获取成功后改为true；PingMeMorningCron：早上签到时间，默认08:30；PingMeEveningCron：晚上签到时间，默认20:30；FetchTimeout：API等待秒数，建议35/45/55/60。
+
+[Script]
+PingMe签到（早） = type=cron, cronexp="{{{PingMeMorningCron}}}", script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/PingMe/PingMeSignin_Surge.js, timeout={{{FetchTimeout}}}, argument="{{{FetchTimeout}}}"
+PingMe签到（晚） = type=cron, cronexp="{{{PingMeEveningCron}}}", script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/PingMe/PingMeSignin_Surge.js, timeout={{{FetchTimeout}}}, argument="{{{FetchTimeout}}}"
+PingMe获取Cookie = type=http-request, pattern=^https:\/\/api\.pingmeapp\.net\/app\/queryBalanceAndBonus(?:\?.*)?$, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/PingMe/PingMeCookie_Surge.js, timeout={{{FetchTimeout}}}, enabled=true, argument="DISABLE={{{DisablePingMeCookie}}}"
+
+[MITM]
+hostname = %APPEND% api.pingmeapp.net
