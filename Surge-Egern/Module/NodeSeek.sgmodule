@@ -1,13 +1,16 @@
-#!name=NodeSeek签到（Szt16）
-#!desc=访问已登录账号的个人资料页保存 Cookie，每天 00:10 签到。使用远程脚本，支持 Cookie 抓取开关及随机/固定奖励。
-#!author=基于 Szt416 / Roddy-D 上游适配
+#!name=NodeSeek 签到 · Surge
+#!desc=Cookie 自动保存并通知；签到结果始终本地通知；可选随机/固定奖励及 Telegram 通知。默认每日 00:10（设备时区）执行。需启用脚本、MITM 并信任 Surge 证书。
+#!author=Szt416; Surge adaptation
 #!homepage=https://github.com/szt416/Rules
-#!arguments=ENABLE_CAPTURE:true,RANDOM_REWARD:true
-#!arguments-desc=ENABLE_CAPTURE：true 开启 Cookie 抓取，false 关闭；获取成功后建议关闭。RANDOM_REWARD：true 随机奖励，false 固定奖励。关闭抓取不影响使用已保存的 Cookie 签到。
+#!icon=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/NodeSeek.png
+#!arguments=ENABLE_CAPTURE:true,RANDOM_REWARD:true,HOUR:0,MINUTE:10,TG_BOT_TOKEN:,TG_USER_ID:,TG_NOTIFY_ONLY_FAIL:false
+#!arguments-desc=ENABLE_CAPTURE：true 开启 Cookie 抓取，验证成功后建议改 false。RANDOM_REWARD：true 随机奖励，false 固定奖励（不是随机执行时间）。HOUR：0–23；MINUTE：0–59。TG_BOT_TOKEN/TG_USER_ID：可选，留空只发 Surge 本地通知。TG_NOTIFY_ONLY_FAIL：仅影响 Telegram，不关闭本地通知。参数填写普通值，不加引号。
 
+# 本地版：将本文件和 NodeSeek_Surge.js 放到 Surge 可读取的同一配置目录。
+# 如改用远程安装，请使用压缩包里的 remote/NodeSeek_Signin.sgmodule，并先上传 JS。
 [Script]
-NodeSeek Cookie 获取 = type=http-request,pattern=^https://www\.nodeseek\.com/api/account/getInfo/\d+(?:\?.*)?$,script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js,timeout=10,argument="capture={{{ENABLE_CAPTURE}}}"
-NodeSeek 自动签到 = type=cron,cronexp="10 0 * * *",script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/NodeSeek/Nodeseek(Surge).js,timeout=30,wake-system=1,argument="random={{{RANDOM_REWARD}}}"
+NodeSeek Cookie 获取 = type=http-request, pattern=^https://www\.nodeseek\.com/api/account/getInfo/\d+\?[^#]*\breadme=1(?:&[^#]*)?$, requires-body=false, script-path=NodeSeek_Surge.js, timeout=20, argument="ENABLE_CAPTURE={{{ENABLE_CAPTURE}}}&TG_BOT_TOKEN={{{TG_BOT_TOKEN}}}&TG_USER_ID={{{TG_USER_ID}}}&TG_NOTIFY_ONLY_FAIL={{{TG_NOTIFY_ONLY_FAIL}}}"
+NodeSeek 自动签到 = type=cron, cronexp="{{{MINUTE}}} {{{HOUR}}} * * *", script-path=NodeSeek_Surge.js, timeout=60, wake-system=true, argument="RANDOM_REWARD={{{RANDOM_REWARD}}}&TG_BOT_TOKEN={{{TG_BOT_TOKEN}}}&TG_USER_ID={{{TG_USER_ID}}}&TG_NOTIFY_ONLY_FAIL={{{TG_NOTIFY_ONLY_FAIL}}}"
 
 [MITM]
 hostname = %APPEND% www.nodeseek.com
