@@ -1,4 +1,4 @@
-#!name=NodeSeek 签到 · Surge
+#!name=NodeSeek 签到
 #!desc=Cookie 自动保存并通知；签到结果始终本地通知；可选随机/固定奖励及 Telegram 通知。默认每日 00:10（设备时区）执行。需启用脚本、MITM 并信任 Surge 证书。
 #!author=Szt416; Surge adaptation
 #!homepage=https://github.com/szt416/Rules
