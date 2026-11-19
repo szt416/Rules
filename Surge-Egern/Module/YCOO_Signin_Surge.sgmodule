@@ -1,4 +1,4 @@
-#!name=源论坛签到（抢排名）· Surge
+#!name=源论坛签到
 #!desc=原 Egern v2.4 逻辑适配：默认23:59预取formhash，等待设备本地午夜提交，失败后刷新令牌兜底。Cookie保存与签到结果本地通知。首次开启ENABLE_CAPTURE，登录后访问签到页获取Cookie，再关闭捕获。iOS后台及网络延迟不保证零点准时或排名。
 #!author=Szt416; Surge adaptation
 #!version=2.4-surge.1
