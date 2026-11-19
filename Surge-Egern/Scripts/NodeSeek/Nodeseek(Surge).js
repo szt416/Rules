@@ -1,4 +1,4 @@
-/* NodeSeek Surge native v1.0.0 (2026-11-19)
+/* NodeSeek Surge native v1.0.1 (2026-11-19)
  * Adapted from szt416/Rules NodeSeek_Cookie.js; original credit Roddy-D.
  * Uses only Surge native APIs. Cookie and UA are stored locally, never logged.
  * random=true/false means reward selection, not randomized execution time.
@@ -56,7 +56,9 @@
     });
   }
   async function telegram(a, subtitle, text, ok) {
-    if (!a.TG_BOT_TOKEN || !a.TG_USER_ID) return;
+    const token = String(a.TG_BOT_TOKEN || '').trim();
+    const chatId = String(a.TG_USER_ID || '').trim();
+    if (!token || !chatId || /^(none|null|false)$/i.test(token) || /^(none|null|false)$/i.test(chatId)) return;
     if (ok && bool(a.TG_NOTIFY_ONLY_FAIL, false)) return;
     try {
       const r = await post({
