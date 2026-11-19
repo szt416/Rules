@@ -1,7 +1,7 @@
 /******************************
 脚本名称: 药丸论坛 Invites.fun
-Version : v0.1.0
-更新时间: 2026-09-30
+Version : v0.1.1（修复 Surge 模块参数替换及 URI 解码异常）
+更新时间: 2026-11-19
 平台: Surge（由 Szt416 的 Egern 原脚本转换）
 功能: Cookie 捕获 + 每日签到
 说明:
@@ -357,11 +357,24 @@ async function main(ctx) {
 // Surge native runtime bridge. Original check-in logic: Szt416.
 function parseArguments(raw) {
   const result = {};
-  String(raw || "").split("&").forEach(function (item) {
+  const text = String(raw || "");
+  if (/%(?:ENABLE_CAPTURE|MINUTE|HOUR|MODE)%|\{\{\{[^}]+\}\}\}/.test(text)) {
+    throw new Error("模块参数未替换，请更新 Invites_Signin.sgmodule，重新检查 ENABLE_CAPTURE 参数后再试");
+  }
+  function decode(value) {
+    try { return decodeURIComponent(value); }
+    catch (_) { throw new Error("模块参数编码错误，请重新检查模块参数，不要填写百分号占位符"); }
+  }
+  text.split("&").forEach(function (item) {
     const index = item.indexOf("=");
-    if (index > 0) result[decodeURIComponent(item.slice(0, index))] =
-      decodeURIComponent(item.slice(index + 1));
+    if (index > 0) result[decode(item.slice(0, index))] = decode(item.slice(index + 1));
   });
+  if (result.ENABLE_CAPTURE !== undefined) {
+    result.ENABLE_CAPTURE = String(result.ENABLE_CAPTURE).trim();
+    if (!/^(true|false|1|0|yes|no|on|off)$/i.test(result.ENABLE_CAPTURE)) {
+      throw new Error("ENABLE_CAPTURE 参数无效，请填写 true 或 false");
+    }
+  }
   return result;
 }
 
