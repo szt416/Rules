@@ -1,17 +1,18 @@
-#!name=源论坛签到
-#!desc=原 Egern v2.4 逻辑适配：默认23:59预取formhash，等待设备本地午夜提交，失败后刷新令牌兜底。Cookie保存与签到结果本地通知。首次开启ENABLE_CAPTURE，登录后访问签到页获取Cookie，再关闭捕获。iOS后台及网络延迟不保证零点准时或排名。
+#!name=源论坛签到（午夜确认 + 中午补签）
+#!desc=午夜签到后通过星币流水确认结果；若当日未确认，12:00仅再尝试一次。Cookie保存在Surge本地，不上传。
 #!author=Szt416; Surge adaptation
-#!version=2.4-surge.1
+#!version=2.5-surge.1
 #!homepage=https://github.com/szt416/Rules
 #!icon=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/icons/YCOO.png
 #!arguments=HOUR:23,MINUTE:59,ENABLE_CAPTURE:false
-#!arguments-desc=HOUR：0–23，默认23；MINUTE：0–59，默认59。ENABLE_CAPTURE：true开启Cookie捕获，false关闭。开启后登录ycoo.net并访问源签到页，收到保存通知后关闭。其他时间手动运行时立即签到；午夜前90秒内运行将等待到午夜。
+#!arguments-desc=HOUR/MINUTE：午夜前预取时间，默认23:59；ENABLE_CAPTURE：登录后临时设为true并访问源论坛签到页，保存Cookie后改回false。
 
-# 远程版：请先把配套 JS 上传到下面的仓库路径，再上传/安装本模块。
-# Cookie仅保存在Surge本地，不要上传到GitHub。
+# 使用前：把配套 YCOO_Signin_Surge.js 上传到下方脚本地址，再安装/更新本模块。
+# 本模块不会读取或上传Cookie；Cookie只存储在Surge本地。
 [Script]
 源论坛 Cookie 获取 = type=http-response, pattern=^https://(?:www\.)?ycoo\.net/k_misign-sign\.html(?:\?.*)?$, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin_Surge.js, requires-body=false, timeout=15, argument="ENABLE_CAPTURE={{{ENABLE_CAPTURE}}}"
-源论坛签到（抢排名） = type=cron, cronexp="{{{MINUTE}}} {{{HOUR}}} * * *", script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin_Surge.js, timeout=240, wake-system=true, argument="MODE=checkin"
+源论坛签到（午夜） = type=cron, cronexp="{{{MINUTE}}} {{{HOUR}}} * * *", script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin_Surge.js, timeout=240, wake-system=true, argument="MODE=checkin"
+源论坛签到（中午补签） = type=cron, cronexp="0 12 * * *", script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/YCOO/YCOO_Signin_Surge.js, timeout=90, wake-system=true, argument="MODE=noon"
 
 [MITM]
 hostname = %APPEND% ycoo.net, www.ycoo.net
