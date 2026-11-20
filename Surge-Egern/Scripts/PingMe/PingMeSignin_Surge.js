@@ -9,8 +9,20 @@ const SECRET = '0fOiukQq7jXZV2GRi9LGlO';
 const MAX_VIDEO = 5;
 const VIDEO_DELAY = 8000;
 const ICON = 'https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/PingMe.png';
+const NOTICE_HISTORY_KEY = 'surge_script_notice_history_v1';
+
+function recordNotice(title, subtitle, body) {
+  try {
+    const raw = $persistentStore.read(NOTICE_HISTORY_KEY);
+    const old = parseJSON(raw);
+    const list = Array.isArray(old) ? old : [];
+    list.push({time:Date.now(), source:NAME, title:String(title || ''), subtitle:String(subtitle || ''), body:String(body || '')});
+    $persistentStore.write(JSON.stringify(list.slice(-30)), NOTICE_HISTORY_KEY);
+  } catch (_) {}
+}
 
 function notify(title, subtitle, body) {
+  recordNotice(title, subtitle, body);
   if (typeof $notification !== 'undefined' && $notification.post) {
     $notification.post(title, subtitle || '', body || '');
   }
