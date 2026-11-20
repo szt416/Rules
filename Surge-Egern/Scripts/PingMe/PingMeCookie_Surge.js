@@ -2,9 +2,19 @@
  * 保留原版存储键 pingme_capture_v3 和通知文案。
  */
 const STORE_KEY = 'pingme_capture_v3';
+const NOTICE_HISTORY_KEY = 'surge_script_notice_history_v1';
 const arg = String(typeof $argument === 'string' ? $argument : '');
 const captureDisabled = /^(?:DISABLE|DisablePingMeCookie)=true$/i.test(arg);
+function recordNotice(title, subtitle, body) {
+  try {
+    const old = JSON.parse($persistentStore.read(NOTICE_HISTORY_KEY) || '[]');
+    const list = Array.isArray(old) ? old : [];
+    list.push({time:Date.now(), source:'PingMe Cookie', title:String(title || ''), subtitle:String(subtitle || ''), body:String(body || '')});
+    $persistentStore.write(JSON.stringify(list.slice(-30)), NOTICE_HISTORY_KEY);
+  } catch (_) {}
+}
 function notify(title, subtitle, body) {
+  recordNotice(title, subtitle, body);
   if (typeof $notification !== 'undefined' && $notification.post) $notification.post(title, subtitle || '', body || '');
 }
 function rawQuery(url) {
