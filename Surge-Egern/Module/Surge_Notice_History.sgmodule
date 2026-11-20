@@ -1,0 +1,7 @@
+#!name=脚本通知历史
+#!desc=运行后通过系统通知显示最近10条已接入历史记录的脚本通知。
+#!author=Minis
+#!version=1.0.0
+
+[Script]
+脚本通知历史 = type=generic, script-path=https://raw.githubusercontent.com/szt416/Rules/refs/heads/main/Surge-Egern/Scripts/Tools/Surge_Notice_History.js, timeout=10
