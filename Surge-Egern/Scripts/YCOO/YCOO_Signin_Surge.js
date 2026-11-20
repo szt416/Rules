@@ -4,7 +4,19 @@ const STORE_KEY = 'ycoo_surge_signin_session_v1';
 const RECEIPT_KEY = 'ycoo_surge_signin_receipt_v1';
 const DEFAULT_BASE = 'https://ycoo.net';
 const SCRIPT_NAME = '源论坛签到';
-function notify(title, body) { $notification.post(SCRIPT_NAME, title, body); }
+const NOTICE_HISTORY_KEY = 'surge_script_notice_history_v1';
+function recordNotice(title, subtitle, body) {
+  try {
+    const old = parseJSON($persistentStore.read(NOTICE_HISTORY_KEY));
+    const list = Array.isArray(old) ? old : [];
+    list.push({time:Date.now(), source:SCRIPT_NAME, title:String(title || ''), subtitle:String(subtitle || ''), body:String(body || '')});
+    $persistentStore.write(JSON.stringify(list.slice(-30)), NOTICE_HISTORY_KEY);
+  } catch (_) {}
+}
+function notify(title, body) {
+  recordNotice(title, '', body);
+  $notification.post(SCRIPT_NAME, title, body);
+}
 function getHeader(headers, name) {
   const key = Object.keys(headers || {}).find(k => k.toLowerCase() === name.toLowerCase());
   return key ? headers[key] : '';
